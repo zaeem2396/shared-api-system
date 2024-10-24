@@ -11,9 +11,11 @@ services:
     volumes:
       - .:/var/www/html
     ports:
-      - "8000:8000"
+      - "8081:8000"
     networks:
       - app-network
+    depends_on:
+      - mysql  
 
   # PHPMyAdmin
   phpmyadmin:
