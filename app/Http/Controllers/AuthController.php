@@ -66,6 +66,20 @@ class AuthController extends Controller
         }
     }
 
+    public function get(Request $request){
+        try {
+            $token = $request->header('Authorization');
+            if (!$token) {
+                return $this->response->error(['error' => 'Unauthorized or token not provided']);
+            }
+            $id = JWTAuth::parseToken()->authenticate()->id;
+            $getUserProfile = $this->user->getUserProfile($id);
+            return $getUserProfile;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
     public function verify(Request $request)
     {
         try {
@@ -75,7 +89,7 @@ class AuthController extends Controller
                 return $this->response->error(['error' => 'Unauthorized or token not provided']);
             }
             $isTokenValid = JWTAuth::parseToken()->authenticate();
-            $response = ['data' => $isTokenValid];
+            $response = ['response' => $isTokenValid];
             return $this->response->success($response);
         } catch (Exception $e) {
             return $e->getMessage();

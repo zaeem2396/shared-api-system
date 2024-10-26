@@ -77,4 +77,18 @@ class User extends Authenticatable implements JWTSubject
             return $e->getMessage();
         }
     }
+
+    public static function getUserProfile($id)
+    {
+        try {
+            $user = self::where('id', $id)->first();
+            if ($user) {
+                return Response::success(['data' => $user]);
+            } else {
+                return Response::error(['message' => 'User not found']);
+            }
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }
