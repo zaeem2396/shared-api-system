@@ -1,0 +1,19 @@
+meta {
+  name: Register
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://app.dev.sas.com:8081/api/register
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name" : "zaeem",
+    "email" : "zaeem@newzy.com",
+    "password" : "zaeem@123"
+  }
+}
