@@ -18,8 +18,6 @@ return new class extends Migration
             $table->string('title');
             $table->string('summary')->unique();
             $table->string('image');
-            $table->string('password');
-            $table->rememberToken();
             $table->timestamps();
         });
     }
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('blogs');
     }
 };
