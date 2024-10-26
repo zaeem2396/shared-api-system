@@ -53,7 +53,9 @@ class AuthController extends Controller
             }
             $response = [
                 'data' => $this->user->where('email', $inputData['email'])->first(),
-                'token' => $token,
+                'access_token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => JWTAuth::factory()->getTTL() * 60,
             ];
             return response()->json(['message' => 'success', 'response' => $response], 201);
         } catch (Exception $e) {
