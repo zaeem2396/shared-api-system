@@ -1,0 +1,15 @@
+meta {
+  name: Verify token
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://app.dev.sas.com:8081/api/verify
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYXBwLmRldi5zYXMuY29tOjgwODEvYXBpL2xvZ2luIiwiaWF0IjoxNzI5OTY2NDI0LCJleHAiOjE3Mjk5NzAwMjQsIm5iZiI6MTcyOTk2NjQyNCwianRpIjoiZUx1Z1N0OU54VGdETmNaZSIsInN1YiI6IjEiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.e30nKFCcOC0VqIqNG6eECZsDTWALw7aIolFlVsbXqPY
+}

@@ -62,4 +62,17 @@ class AuthController extends Controller
             return $e->getMessage();
         }
     }
+
+    public function verify(Request $request){
+        try {
+            $token = $request->header('Authorization');
+            if (!$token) {
+                return response()->json(['error' => 'Unauthorized or token not provided'], 401);
+            }    
+            $isTokenValid = JWTAuth::parseToken()->authenticate();
+            return response()->json(['message' => 'success', 'response' => $isTokenValid], 201);
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }
