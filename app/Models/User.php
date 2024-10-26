@@ -9,6 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
+use App\Models\Blog;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -82,13 +83,16 @@ class User extends Authenticatable implements JWTSubject
     {
         try {
             $user = self::where('id', $id)->first();
-            if ($user) {
-                return Response::success(['data' => $user]);
-            } else {
+
+            if (!$user) {
                 return Response::error(['message' => 'User not found']);
             }
+            $userArray = $user->toArray();
+            $userArray['totalBlogs'] = Blog::where('authorId', $id)->count();
+
+            return Response::success(['response' => $userArray]);
         } catch (Exception $e) {
-            return $e->getMessage();
+            return Response::error(['message' => $e->getMessage()]);
         }
     }
 }
