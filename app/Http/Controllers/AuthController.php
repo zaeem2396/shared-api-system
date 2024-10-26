@@ -7,16 +7,18 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+use App\Utils\Response;
 
 class AuthController extends Controller
 {
 
-    protected $jwtAuth;
     protected $user;
+    protected $response;
 
-    public function __construct(User $user)
+    public function __construct(User $user, Response $response)
     {
         $this->user = $user;
+        $this->response = $response;
     }
 
     public function register(Request $request)
@@ -31,7 +33,7 @@ class AuthController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()], 422);
+                return $this->response->error(['errors' => $validator->errors()->all()]);
             }
 
             $isUserCreated = $this->user->createUser($inputData);
@@ -49,7 +51,8 @@ class AuthController extends Controller
             $token = JWTAuth::attempt($inputData);
 
             if (!$token) {
-                return response()->json(['error' => 'Invalid credentials'], 401);
+                $response = ['error' => 'Invalid credentials'];
+                return $this->response->error($response);
             }
             $response = [
                 'data' => $this->user->where('email', $inputData['email'])->first(),
@@ -57,20 +60,23 @@ class AuthController extends Controller
                 'token_type' => 'bearer',
                 'expires_in' => JWTAuth::factory()->getTTL() * 60,
             ];
-            return response()->json(['message' => 'success', 'response' => $response], 201);
+            return $this->response->success($response);
         } catch (Exception $e) {
             return $e->getMessage();
         }
     }
 
-    public function verify(Request $request){
+    public function verify(Request $request)
+    {
         try {
             $token = $request->header('Authorization');
+
             if (!$token) {
-                return response()->json(['error' => 'Unauthorized or token not provided'], 401);
-            }    
+                return $this->response->error(['error' => 'Unauthorized or token not provided']);
+            }
             $isTokenValid = JWTAuth::parseToken()->authenticate();
-            return response()->json(['message' => 'success', 'response' => $isTokenValid], 201);
+            $response = ['data' => $isTokenValid];
+            return $this->response->success($response);
         } catch (Exception $e) {
             return $e->getMessage();
         }

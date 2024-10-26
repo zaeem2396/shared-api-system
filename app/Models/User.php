@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Utils\Response;
 use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -64,13 +65,13 @@ class User extends Authenticatable implements JWTSubject
         try {
             $isUserExist = self::where('email', $inputData['email'])->first();
             if ($isUserExist) {
-                return response()->json(['message' => 'User already exist'], 400);
+                return Response::duplicate(['message' => 'User already exist']);
             }
             $isUserCreated = self::create($inputData);
             if ($isUserCreated) {
-                return response()->json(['message' => 'User created successfully'], 200);
+                return Response::success(['message' => 'User created successfully']);
             } else {
-                return response()->json(['message' => 'Something went wrong'], 400);
+                return Response::error(['message' => 'Something went wrong']);
             }
         } catch (Exception $e) {
             return $e->getMessage();
