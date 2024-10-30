@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use App\Utils\Response;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
@@ -15,6 +16,7 @@ class AuthController extends Controller
 
     protected $user;
     protected $response;
+    protected $log;
 
     public function __construct(User $user, Response $response)
     {
@@ -34,6 +36,7 @@ class AuthController extends Controller
             ]);
 
             if ($validator->fails()) {
+                Log::error('Validation failed', ['errors' => $validator->errors()->all()]);
                 return $this->response->error(['errors' => $validator->errors()->all()]);
             }
 

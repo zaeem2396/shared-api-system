@@ -11,6 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use App\Models\Blog;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -67,12 +68,15 @@ class User extends Authenticatable implements JWTSubject
         try {
             $isUserExist = self::where('email', $inputData['email'])->first();
             if ($isUserExist) {
+                Log::info('User already exist', [$isUserExist]);
                 return Response::duplicate(['message' => 'User already exist']);
             }
             $isUserCreated = self::create($inputData);
             if ($isUserCreated) {
+                Log::info('User created successfully', [$isUserCreated]);
                 return Response::success(['message' => 'User created successfully']);
             } else {
+                Log::error('Something went wrong', [$isUserCreated]);
                 return Response::error(['message' => 'Something went wrong']);
             }
         } catch (Exception $e) {
