@@ -66,7 +66,8 @@ class AuthController extends Controller
         }
     }
 
-    public function get(Request $request){
+    public function get(Request $request)
+    {
         try {
             $token = $request->header('Authorization');
             if (!$token) {
@@ -75,6 +76,32 @@ class AuthController extends Controller
             $id = JWTAuth::parseToken()->authenticate()->id;
             $getUserProfile = $this->user->getUserProfile($id);
             return $getUserProfile;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function update(Request $request)
+    {
+        try {
+            $token = $request->header('Authorization');
+            if (!$token) {
+                return $this->response->error(['error' => 'Unauthorized or token not provided']);
+            }
+            $id = JWTAuth::parseToken()->authenticate()->id;
+            
+            $inputData = $request->only('name', 'email', 'specialist', 'role');
+            $validator = Validator::make($inputData, [
+                'name' => 'string|max:255',
+                'email' => 'email',
+                'specialist' => 'string',
+                'role' => 'string',
+            ]);
+            if ($validator->fails()) {
+                return $this->response->error(['errors' => $validator->errors()->all()]);
+            }
+            $isUserUpdated = $this->user->updateAuthor($id, $inputData);
+            return $isUserUpdated;
         } catch (Exception $e) {
             return $e->getMessage();
         }

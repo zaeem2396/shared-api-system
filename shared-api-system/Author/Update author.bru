@@ -1,0 +1,24 @@
+meta {
+  name: Update author
+  type: http
+  seq: 5
+}
+
+put {
+  url: http://app.dev.sas.com:8081/api/author/update
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYXBwLmRldi5zYXMuY29tOjgwODEvYXBpL2F1dGhvci9sb2dpbiIsImlhdCI6MTczMDMwNjQwNSwiZXhwIjoxNzMwMzEwMDA1LCJuYmYiOjE3MzAzMDY0MDUsImp0aSI6ImRKWWR2NXlpaXFYNDdQOW0iLCJzdWIiOiIxIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.DzsBAq0owJk2kvOZWwQd53SkUHrC_WJDwEoFaLcZHKc
+}
+
+body:json {
+  {
+    "name" : "zaeem ul huda",
+    "email" : "zaeem@newzy.com",
+    "specialist" : "crime, politics",
+    "role" : "jorunalist"
+  }
+}

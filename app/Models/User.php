@@ -95,4 +95,27 @@ class User extends Authenticatable implements JWTSubject
             return Response::error(['message' => $e->getMessage()]);
         }
     }
+
+    public static function updateAuthor($id, array $inputData)
+    {
+        try {
+            $isUserExist = self::where('id', $id)->first();
+            if (!$isUserExist) {
+                return Response::error(['message' => 'User not found']);
+            }
+            $isUserUpdated = self::where('id', $id)->update($inputData);
+            if ($isUserUpdated) {
+                $getUpdatedInfo = self::where('id', $id)->first()->toArray();
+                $response = [
+                    'message' => 'User updated successfully',
+                    'userInfo' => $getUpdatedInfo
+                ];
+                return Response::success($response);
+            } else {
+                return Response::error(['message' => 'Something went wrong']);
+            }
+        } catch (Exception $e) {
+            return Response::error(['message' => $e->getMessage()]);
+        }
+    }
 }
