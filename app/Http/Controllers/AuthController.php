@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use App\Utils\Response;
+use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
@@ -29,7 +30,7 @@ class AuthController extends Controller
             $validator = Validator::make($inputData, [
                 'name' => 'required|string|max:255',
                 'email' => 'required|email',
-                'password' => 'required|string|min:8',
+                'password' => ['required','string', Password::min(8)->max(10)->mixedCase()->symbols()],
             ]);
 
             if ($validator->fails()) {
