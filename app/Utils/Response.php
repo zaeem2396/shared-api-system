@@ -9,7 +9,7 @@ class Response
         return json_encode([
             'status' => 200,
             'ack' => 'success',
-            'data' => $data
+            'response' => $data
         ]);
     }
 
@@ -18,7 +18,7 @@ class Response
         return json_encode([
             'status' => 500,
             'ack' => 'error',
-            'data' => $data
+            'response' => $data
         ]);
     }
 
@@ -27,7 +27,7 @@ class Response
         return json_encode([
             'status' => 409,
             'ack' => 'duplicate',
-            'data' => $data
+            'response' => $data
         ]);
     }
 }
