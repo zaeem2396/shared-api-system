@@ -18,7 +18,10 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::post('register', [AuthController::class, 'register']);
-Route::post('login', [AuthController::class, 'login']);
-Route::post('verify', [AuthController::class, 'verify']);
-Route::get('get', [AuthController::class, 'get']);
+Route::group(['prefix' => 'author'], function () {
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('verify', [AuthController::class, 'verify']);
+    Route::get('get', [AuthController::class, 'get']);
+    // Route::put('update', AuthController::class, 'update');
+});
