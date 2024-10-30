@@ -108,6 +108,29 @@ class AuthController extends Controller
         }
     }
 
+    public function updatePassword(Request $request)
+    {
+        try {
+            $token = $request->header('Authorization');
+            if (!$token) {
+                return $this->response->error(['error' => 'Unauthorized or token not provided']);
+            }
+            $id = JWTAuth::parseToken()->authenticate()->id;
+
+            $inputData = $request->only('password');
+            $validator = Validator::make($inputData, [
+                'password' => ['required','string', Password::min(8)->max(10)->mixedCase()->symbols()],
+            ]);
+            if ($validator->fails()) {
+                return $this->response->error(['errors' => $validator->errors()->all()]);
+            }
+            $isPasswordUpdated = $this->user->updatePassword($id, $inputData);
+            return $isPasswordUpdated;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
     public function verify(Request $request)
     {
         try {

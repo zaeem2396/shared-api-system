@@ -24,4 +24,5 @@ Route::group(['prefix' => 'author'], function () {
     Route::post('verify', [AuthController::class, 'verify']);
     Route::get('get', [AuthController::class, 'get']);
     Route::put('update', [AuthController::class, 'update']);
+    Route::put('updatePassword', [AuthController::class, 'updatePassword']);
 });
