@@ -10,6 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use App\Models\Blog;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -126,6 +127,7 @@ class User extends Authenticatable implements JWTSubject
             if (!$isUserExist) {
                 return Response::error(['message' => 'User not found']);
             }
+            $inputData['password'] = Hash::make($inputData['password']);
             $isUserUpdated = self::where('id', $id)->update($inputData);
             if ($isUserUpdated) {
                 return Response::success(['message' => 'Password updated successfully']);
