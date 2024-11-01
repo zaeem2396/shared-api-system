@@ -95,6 +95,16 @@ class User extends Authenticatable implements JWTSubject
         }
     }
 
+    public static function isEmailVerified(array $inputData)
+    {
+        $emailVerified = self::where('email', $inputData['email'])->first();
+        if (intval($emailVerified->isEmailVerified) === 1) {
+            return app(Response::class)->success(['verified' => true]);
+        } else {
+            return app(Response::class)->error(['verified' => false]);
+        }
+    }
+
     public static function getUserProfile($id)
     {
         try {

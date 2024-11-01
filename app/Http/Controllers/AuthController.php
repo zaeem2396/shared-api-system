@@ -16,7 +16,6 @@ class AuthController extends Controller
 
     protected $user;
     protected $response;
-    protected $log;
 
     public function __construct(User $user, Response $response)
     {
@@ -32,11 +31,10 @@ class AuthController extends Controller
             $validator = Validator::make($inputData, [
                 'name' => 'required|string|max:255',
                 'email' => 'required|email',
-                'password' => ['required','string', Password::min(8)->max(10)->mixedCase()->symbols()],
+                'password' => ['required', 'string', Password::min(8)->max(10)->mixedCase()->symbols()],
             ]);
 
             if ($validator->fails()) {
-                Log::error('Validation failed', ['errors' => $validator->errors()->all()]);
                 return $this->response->error(['errors' => $validator->errors()->all()]);
             }
 
@@ -51,6 +49,10 @@ class AuthController extends Controller
     {
         try {
             $inputData = $request->only('email', 'password');
+            $isEmailVerified = json_decode($this->user->isEmailVerified($inputData));
+            if (!$isEmailVerified->response->verified) {
+                return app(Response::class)->error(['message' => 'Email not verified']);
+            }
 
             $token = JWTAuth::attempt($inputData);
 
@@ -93,7 +95,7 @@ class AuthController extends Controller
                 return $this->response->error(['error' => 'Unauthorized or token not provided']);
             }
             $id = JWTAuth::parseToken()->authenticate()->id;
-            
+
             $inputData = $request->only('name', 'email', 'specialist', 'role');
             $validator = Validator::make($inputData, [
                 'name' => 'string|max:255',
@@ -122,7 +124,7 @@ class AuthController extends Controller
 
             $inputData = $request->only('password');
             $validator = Validator::make($inputData, [
-                'password' => ['required','string', Password::min(8)->max(10)->mixedCase()->symbols()],
+                'password' => ['required', 'string', Password::min(8)->max(10)->mixedCase()->symbols()],
             ]);
             if ($validator->fails()) {
                 return $this->response->error(['errors' => $validator->errors()->all()]);
