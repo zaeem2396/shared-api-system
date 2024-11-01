@@ -2,6 +2,7 @@
 
 namespace App\Utils;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
 class ActivityLogger
@@ -12,19 +13,19 @@ class ActivityLogger
             'user_id' => $user,
             'action' => $action,
             'details' => json_encode($details),
-            'timestamp' => now(),
+            'timestamp' => Carbon::now()->format('d-m-Y, H:i:s'),
         ];
         Log::channel('user_activity')->info(json_encode($logData));
     }
 
-    public function logSystemActivity($statusCode, $responseType, $message, $data = [])
+    public function logSystemActivity($message, $data = [], $statusCode = '', $responseType = '')
     {
         $logData = [
-            'status_code' => $statusCode,
-            'response_type' => $responseType,
             'message' => $message,
             'data' => json_encode($data),
-            'timestamp' => now(),
+            'status_code' => $statusCode,
+            'response_type' => $responseType,
+            'timestamp' => Carbon::now()->format('d-m-Y, H:i:s'),
         ];
         Log::channel('system_activity')->debug(json_encode($logData));
     }

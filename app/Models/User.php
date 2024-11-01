@@ -10,8 +10,8 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use App\Models\Blog;
+use App\Utils\ActivityLogger;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -63,23 +63,34 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
+
     public static function createUser(array $inputData)
     {
         try {
+            app(ActivityLogger::class)->logSystemActivity('Starting user creation process', ['email' => $inputData['email']]);
             $isUserExist = self::where('email', $inputData['email'])->first();
+
             if ($isUserExist) {
-                Log::info('User already exist', [$isUserExist]);
-                return Response::duplicate(['message' => 'User already exist']);
+                app(ActivityLogger::class)->logSystemActivity('Duplicate user found', ['email' => $inputData['email']], 409);
+                app(ActivityLogger::class)->logUserActivity('Duplicate user creation', ['email' => $inputData['email']], 409);
+
+                return app(Response::class)->duplicate(['message' => 'User already exist']);
             }
             $isUserCreated = self::create($inputData);
             if ($isUserCreated) {
-                Log::info('User created successfully', [$isUserCreated]);
-                return Response::success(['message' => 'User created successfully']);
+                app(ActivityLogger::class)->logSystemActivity('User created successfully', $isUserCreated, 200, 'json');
+                app(ActivityLogger::class)->logUserActivity($inputData['email'], 'User created successfully', ['email' => $inputData['email']]);
+
+                return app(Response::class)->success(['message' => 'User created successfully']);
             } else {
-                Log::error('Something went wrong', [$isUserCreated]);
-                return Response::error(['message' => 'Something went wrong']);
+                app(ActivityLogger::class)->logSystemActivity('User creation failed', $isUserCreated, 400);
+                app(ActivityLogger::class)->logUserActivity($inputData['email'], 'User creation failed', ['email' => $inputData['email']]);
+
+                return app(Response::class)->error(['message' => 'Something went wrong']);
             }
         } catch (Exception $e) {
+            app(ActivityLogger::class)->logSystemActivity(500, 'json', $e->getMessage(), $e);
+
             return $e->getMessage();
         }
     }

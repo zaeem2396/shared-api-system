@@ -131,9 +131,9 @@ return [
             'path' => storage_path('logs/user_activity.log'),
             'level' => 'info'
         ],
-        'api_activity' => [
+        'system_activity' => [
             'driver' => 'single',
-            'path' => storage_path('logs/api_activity.log'),
+            'path' => storage_path('logs/system_activity.log'),
             'level' => 'debug'
         ],
     ],
