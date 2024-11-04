@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use App\Utils\Response;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
