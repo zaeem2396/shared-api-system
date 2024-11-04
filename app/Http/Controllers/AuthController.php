@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use App\Utils\Response;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
@@ -40,6 +40,26 @@ class AuthController extends Controller
 
             $isUserCreated = $this->user->createUser($inputData);
             return $isUserCreated;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function verifyEmail(Request $request)
+    {
+        try {
+            $inputData = $request->only('token');
+
+            $validator = Validator::make($inputData, [
+                'token' => 'required|string',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->response->error(['errors' => $validator->errors()->all()]);
+            }
+
+            $isEmailVerified = $this->user->verify($inputData);
+            return $isEmailVerified;
         } catch (Exception $e) {
             return $e->getMessage();
         }

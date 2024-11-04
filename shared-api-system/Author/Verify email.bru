@@ -1,0 +1,17 @@
+meta {
+  name: Verify email
+  type: http
+  seq: 7
+}
+
+post {
+  url: http://app.dev.sas.com:8081/api/author/verifyEmail
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "token":"eyJpdiI6IkZjUFRTek5XVVFLeWRZZlZRNXU2K3c9PSIsInZhbHVlIjoiVk9lTGRyMWczQXdZVGU0NUFsSldxaklHemM5VXF0RWxqdVVvTkRtNFZJST0iLCJtYWMiOiI2Y2UwOGI5NzFmNGVjNmY5ODY0ZjkxZDZlYjk3ODViOGY2MTJmNDZlM2NjOWY0Y2MyZjM5ZmMzMmFhMmIxYTlmIiwidGFnIjoiIn0="
+  }
+}

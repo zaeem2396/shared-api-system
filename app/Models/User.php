@@ -11,6 +11,8 @@ use Laravel\Sanctum\HasApiTokens;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use App\Models\Blog;
 use App\Utils\ActivityLogger;
+use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable implements JWTSubject
@@ -89,6 +91,51 @@ class User extends Authenticatable implements JWTSubject
                 return app(Response::class)->error(['message' => 'Something went wrong']);
             }
         } catch (Exception $e) {
+            app(ActivityLogger::class)->logSystemActivity(500, 'json', $e->getMessage(), $e);
+
+            return $e->getMessage();
+        }
+    }
+
+    public static function verify(array $inputData)
+    {
+        try {
+            // dd(Crypt::decryptString($inputData['token']));
+            app(ActivityLogger::class)->logSystemActivity('Starting user`s email verification process', ['email' => Crypt::decrypt($inputData['token'])]);
+            $isUserExist = self::where('email', Crypt::decrypt($inputData['token']))->first();
+
+            // Check if User exist
+            if (!$isUserExist) {
+                app(ActivityLogger::class)->logSystemActivity('User not found', ['email' => Crypt::decrypt($inputData['token'])], 404);
+                app(ActivityLogger::class)->logUserActivity('User not found', ['email' => Crypt::decrypt($inputData['token'])], 404);
+
+                return app(Response::class)->error(['message' => 'User not found']);
+            }
+
+            // Validate if email is already verified
+            if (intval($isUserExist->isEmailVerified) === 1) {
+                app(ActivityLogger::class)->logSystemActivity('User email already verified', ['email' => Crypt::decrypt($inputData['token'])], 400);
+                app(ActivityLogger::class)->logUserActivity('User email already verified', ['email' => Crypt::decrypt($inputData['token'])], 400);
+
+                return app(Response::class)->error(['message' => 'User email already verified']);
+            }
+
+            // Verify if token is valid or not
+            if ($isUserExist['email'] === Crypt::decrypt($inputData['token'])) {
+                $isUserVerified = self::where('email', Crypt::decrypt($inputData['token']))->update(['isEmailVerified' => 1]);
+                if ($isUserVerified) {
+                    app(ActivityLogger::class)->logSystemActivity('User email verified successfully', $isUserVerified, 200, 'json');
+                    app(ActivityLogger::class)->logUserActivity('User email verified successfully', $isUserVerified, 200, 'json');
+
+                    return app(Response::class)->success(['message' => 'User email verified successfully']);
+                } else {
+                    app(ActivityLogger::class)->logSystemActivity('User email verification failed', $isUserVerified, 400);
+                    app(ActivityLogger::class)->logUserActivity('User email verification failed', $isUserVerified, 400);
+
+                    return app(Response::class)->error(['message' => 'Something went wrong']);
+                }
+            }
+        } catch (DecryptException $e) {
             app(ActivityLogger::class)->logSystemActivity(500, 'json', $e->getMessage(), $e);
 
             return $e->getMessage();
