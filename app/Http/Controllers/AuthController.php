@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Utils\MailService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -15,11 +16,13 @@ class AuthController extends Controller
 
     protected $user;
     protected $response;
+    protected $mailService;
 
-    public function __construct(User $user, Response $response)
+    public function __construct(User $user, Response $response, MailService $mailServices)
     {
         $this->user = $user;
         $this->response = $response;
+        $this->mailService = $mailServices;
     }
 
     public function register(Request $request)
@@ -47,6 +50,7 @@ class AuthController extends Controller
     public function verifyEmail(Request $request)
     {
         try {
+            // logic needs to be revised
             $inputData = $request->only('token');
 
             $validator = Validator::make($inputData, [

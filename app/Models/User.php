@@ -11,6 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use App\Models\Blog;
 use App\Utils\ActivityLogger;
+use App\Utils\MailService;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
@@ -80,6 +81,14 @@ class User extends Authenticatable implements JWTSubject
             }
             $isUserCreated = self::create($inputData);
             if ($isUserCreated) {
+
+                // Send register mail
+                $getEmailData = app(EmailTemplates::class)->where('name', 'register_author')->first();
+                $subject = $getEmailData['subject'];
+                $verificationLink = env('APP_URL') . 'api/author/verifyEmail?token=' . Crypt::encrypt($inputData['email']);
+                $content = str_replace('<verification_link>', $verificationLink, $getEmailData['content']);
+
+                app(MailService::class)->sendMail('no_reply@newzy.com', $inputData['email'], $subject, $content);
                 app(ActivityLogger::class)->logSystemActivity('User created successfully', $isUserCreated, 200, 'json');
                 app(ActivityLogger::class)->logUserActivity($inputData['email'], 'User created successfully', ['email' => $inputData['email']]);
 
@@ -91,7 +100,7 @@ class User extends Authenticatable implements JWTSubject
                 return app(Response::class)->error(['message' => 'Something went wrong']);
             }
         } catch (Exception $e) {
-            app(ActivityLogger::class)->logSystemActivity(500, 'json', $e->getMessage(), $e);
+            app(ActivityLogger::class)->logSystemActivity($e->getMessage(), $inputData, 500, 'JSON');
 
             return $e->getMessage();
         }
@@ -100,7 +109,6 @@ class User extends Authenticatable implements JWTSubject
     public static function verify(array $inputData)
     {
         try {
-            // dd(Crypt::decryptString($inputData['token']));
             app(ActivityLogger::class)->logSystemActivity('Starting user`s email verification process', ['email' => Crypt::decrypt($inputData['token'])]);
             $isUserExist = self::where('email', Crypt::decrypt($inputData['token']))->first();
 
@@ -136,7 +144,7 @@ class User extends Authenticatable implements JWTSubject
                 }
             }
         } catch (DecryptException $e) {
-            app(ActivityLogger::class)->logSystemActivity(500, 'json', $e->getMessage(), $e);
+            app(ActivityLogger::class)->logSystemActivity($e->getMessage(), $inputData, 500, 'JSON');
 
             return $e->getMessage();
         }
