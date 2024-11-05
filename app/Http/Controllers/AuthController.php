@@ -50,7 +50,6 @@ class AuthController extends Controller
     public function verifyEmail(Request $request)
     {
         try {
-            // logic needs to be revised
             $inputData = $request->only('token');
 
             $validator = Validator::make($inputData, [

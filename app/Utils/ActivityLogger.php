@@ -7,12 +7,12 @@ use Illuminate\Support\Facades\Log;
 
 class ActivityLogger
 {
-    public function logUserActivity($user, $action, $details = [])
+    public function logUserActivity($action, $user, $details = [])
     {
         $logData = [
-            'user_id' => $user,
             'action' => $action,
-            'details' => json_encode($details),
+            'user_id' => $user,
+            'details' => json_encode($details) || [],
             'timestamp' => Carbon::now()->format('d-m-Y, H:i:s'),
         ];
         Log::channel('user_activity')->info(json_encode($logData));
@@ -24,7 +24,7 @@ class ActivityLogger
             'message' => $message,
             'data' => json_encode($data),
             'status_code' => $statusCode,
-            'response_type' => $responseType,
+            'response_type' => $responseType || 'json',
             'timestamp' => Carbon::now()->format('d-m-Y, H:i:s'),
         ];
         Log::channel('system_activity')->debug(json_encode($logData));

@@ -75,7 +75,7 @@ class User extends Authenticatable implements JWTSubject
 
             if ($isUserExist) {
                 app(ActivityLogger::class)->logSystemActivity('Duplicate user found', ['email' => $inputData['email']], 409);
-                app(ActivityLogger::class)->logUserActivity('Duplicate user creation', ['email' => $inputData['email']], 409);
+                app(ActivityLogger::class)->logUserActivity('Duplicate user creation', ['email' => $inputData['email']]);
 
                 return app(Response::class)->duplicate(['message' => 'User already exist']);
             }
@@ -90,12 +90,12 @@ class User extends Authenticatable implements JWTSubject
 
                 app(MailService::class)->sendMail('no_reply@newzy.com', $inputData['email'], $subject, $content);
                 app(ActivityLogger::class)->logSystemActivity('User created successfully', $isUserCreated, 200, 'json');
-                app(ActivityLogger::class)->logUserActivity($inputData['email'], 'User created successfully', ['email' => $inputData['email']]);
+                app(ActivityLogger::class)->logUserActivity('User created successfully', $inputData['email'], ['email' => $inputData['email']]);
 
                 return app(Response::class)->success(['message' => 'User created successfully']);
             } else {
                 app(ActivityLogger::class)->logSystemActivity('User creation failed', $isUserCreated, 400);
-                app(ActivityLogger::class)->logUserActivity($inputData['email'], 'User creation failed', ['email' => $inputData['email']]);
+                app(ActivityLogger::class)->logUserActivity('User creation failed', $inputData['email'], ['email' => $inputData['email']]);
 
                 return app(Response::class)->error(['message' => 'Something went wrong']);
             }
@@ -133,12 +133,12 @@ class User extends Authenticatable implements JWTSubject
                 $isUserVerified = self::where('email', Crypt::decrypt($inputData['token']))->update(['isEmailVerified' => 1]);
                 if ($isUserVerified) {
                     app(ActivityLogger::class)->logSystemActivity('User email verified successfully', $isUserVerified, 200, 'json');
-                    app(ActivityLogger::class)->logUserActivity('User email verified successfully', $isUserVerified, 200, 'json');
+                    app(ActivityLogger::class)->logUserActivity('User email verified successfully', $isUserVerified);
 
                     return app(Response::class)->success(['message' => 'User email verified successfully']);
                 } else {
                     app(ActivityLogger::class)->logSystemActivity('User email verification failed', $isUserVerified, 400);
-                    app(ActivityLogger::class)->logUserActivity('User email verification failed', $isUserVerified, 400);
+                    app(ActivityLogger::class)->logUserActivity('User email verification failed', $isUserVerified);
 
                     return app(Response::class)->error(['message' => 'Something went wrong']);
                 }
@@ -163,16 +163,25 @@ class User extends Authenticatable implements JWTSubject
     public static function getUserProfile($id)
     {
         try {
+            app(ActivityLogger::class)->logSystemActivity('Starting get user profile process', ['id' => $id]);
             $user = self::where('id', $id)->first();
 
             if (!$user) {
+                app(ActivityLogger::class)->logSystemActivity('User not found', ['id' => $id], 404);
+                app(ActivityLogger::class)->logUserActivity('User not found', ['id' => $id]);
+
                 return Response::error(['message' => 'User not found']);
             }
             $userArray = $user->toArray();
             $userArray['totalBlogs'] = Blog::where('authorId', $id)->count();
 
+            app(ActivityLogger::class)->logSystemActivity('User profile fetched successfully', $userArray, 200, 'json');
+            app(ActivityLogger::class)->logUserActivity('User profile fetched successfully', $userArray);
+
             return Response::success(['response' => $userArray]);
         } catch (Exception $e) {
+            app(ActivityLogger::class)->logSystemActivity($e->getMessage(), ['id' => $id], 500, 'JSON');
+
             return Response::error(['message' => $e->getMessage()]);
         }
     }
@@ -180,8 +189,13 @@ class User extends Authenticatable implements JWTSubject
     public static function updateAuthor($id, array $inputData)
     {
         try {
+            app(ActivityLogger::class)->logSystemActivity('Starting update user profile process', ['id' => $id]);
             $isUserExist = self::where('id', $id)->first();
+
             if (!$isUserExist) {
+                app(ActivityLogger::class)->logSystemActivity('User not found', ['id' => $id, 'data' => $inputData], 404);
+                app(ActivityLogger::class)->logUserActivity('User not found', ['id' => $id, 'data' => $inputData]);
+
                 return Response::error(['message' => 'User not found']);
             }
             $isUserUpdated = self::where('id', $id)->update($inputData);
@@ -191,11 +205,19 @@ class User extends Authenticatable implements JWTSubject
                     'message' => 'User updated successfully',
                     'userInfo' => $getUpdatedInfo
                 ];
+
+                app(ActivityLogger::class)->logSystemActivity('User profile updated successfully', $response, 200, 'json');
+                app(ActivityLogger::class)->logUserActivity('User profile updated successfully', $response);
+
                 return Response::success($response);
             } else {
+                app(ActivityLogger::class)->logSystemActivity('User profile update failed', $isUserUpdated, 400);
+                app(ActivityLogger::class)->logUserActivity('User profile update failed', $isUserUpdated);
+
                 return Response::error(['message' => 'Something went wrong']);
             }
         } catch (Exception $e) {
+            app(ActivityLogger::class)->logSystemActivity($e->getMessage(), ['id' => $id, 'data' => $inputData], 500, 'json');
             return Response::error(['message' => $e->getMessage()]);
         }
     }
@@ -203,18 +225,29 @@ class User extends Authenticatable implements JWTSubject
     public static function updatePassword($id, array $inputData)
     {
         try {
+            app(ActivityLogger::class)->logSystemActivity('Starting update user password process', ['id' => $id]);
             $isUserExist = self::where('id', $id)->first();
             if (!$isUserExist) {
+                app(ActivityLogger::class)->logSystemActivity('User not found', ['id' => $id, 'data' => $inputData], 404);
+                app(ActivityLogger::class)->logUserActivity('User not found', ['id' => $id, 'data' => $inputData]);
+
                 return Response::error(['message' => 'User not found']);
             }
             $inputData['password'] = Hash::make($inputData['password']);
             $isUserUpdated = self::where('id', $id)->update($inputData);
             if ($isUserUpdated) {
+                app(ActivityLogger::class)->logSystemActivity('Password updated successfully', $isUserUpdated, 200, 'json');
+                app(ActivityLogger::class)->logUserActivity('Password updated successfully', $isUserUpdated);
+
                 return Response::success(['message' => 'Password updated successfully']);
             } else {
+                app(ActivityLogger::class)->logSystemActivity('Password update failed', $isUserUpdated, 400);
+                app(ActivityLogger::class)->logUserActivity('Password update failed', $isUserUpdated);
+
                 return Response::error(['message' => 'Something went wrong']);
             }
         } catch (Exception $e) {
+            app(ActivityLogger::class)->logSystemActivity($e->getMessage(), ['id' => $id, 'data' => $inputData], 500, 'json');
             return Response::error(['message' => $e->getMessage()]);
         }
     }
