@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use App\Utils\Response;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
@@ -71,28 +72,46 @@ class AuthController extends Controller
     {
         try {
             $inputData = $request->only('email', 'password');
+            $email = $inputData['email'];
+            $cacheKey = 'login_attempts_' . $email;
+
+            // Rate limiting logic: Check if the user has exceeded login attempts
+            if (RateLimiter::tooManyAttempts($cacheKey, 3)) {
+                $retryAfterSeconds = RateLimiter::availableIn($cacheKey);
+                return $this->response->error(['message' => "Too many attempts. Please try again in {$retryAfterSeconds} seconds."]);
+            }
+
+            // Check if the email is verified
             $isEmailVerified = json_decode($this->user->isEmailVerified($inputData));
             if (!$isEmailVerified->response->verified) {
-                return app(Response::class)->error(['message' => 'Email not verified']);
+                return $this->response->error(['message' => 'Email not verified']);
             }
 
             $token = JWTAuth::attempt($inputData);
-
             if (!$token) {
-                $response = ['error' => 'Invalid credentials'];
-                return $this->response->error($response);
+                // Log a failed attempt
+                RateLimiter::hit($cacheKey, 300);
+
+                return $this->response->error(['error' => 'Invalid credentials']);
             }
+
+            // Clear login attempts cache if successful
+            RateLimiter::clear($cacheKey);
+
+            // Successful login response
             $response = [
-                'data' => $this->user->where('email', $inputData['email'])->first(),
+                'data' => $this->user->where('email', $email)->first(),
                 'access_token' => $token,
                 'token_type' => 'bearer',
                 'expires_in' => JWTAuth::factory()->getTTL() * 60,
             ];
+
             return $this->response->success($response);
         } catch (Exception $e) {
             return $e->getMessage();
         }
     }
+
 
     public function get(Request $request)
     {
