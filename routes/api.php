@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BlogController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -28,4 +29,10 @@ Route::group(['prefix' => 'author'], function () {
     Route::put('updatePassword', [AuthController::class, 'updatePassword']);
     Route::get('verifyEmail', [AuthController::class, 'verifyEmail']);
     Route::post('resendVerificationLink', [AuthController::class, 'verificationLink']);
+});
+
+Route::group(['prefix' => 'blog'], function () {
+    Route::group(['prefix' => 'category'], function () {
+        Route::post('create', [BlogController::class, 'create']);
+    });
 });
