@@ -1,0 +1,17 @@
+meta {
+  name: Resend verification link
+  type: http
+  seq: 8
+}
+
+post {
+  url: http://app.dev.sas.com:8081/api/author/resendVerificationLink
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "email":"mark@newzy.com"
+  }
+}

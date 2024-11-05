@@ -173,4 +173,21 @@ class AuthController extends Controller
             return $e->getMessage();
         }
     }
+
+    public function verificationLink(Request $request)
+    {
+        try {
+            $inputData = $request->only('email');
+            $validator = Validator::make($inputData, [
+                'email' => 'required|email',
+            ]);
+            if ($validator->fails()) {
+                return $this->response->error(['errors' => $validator->errors()->all()]);
+            }
+            $isVerificationLinkSent = $this->user->sendVerificationLink($inputData);
+            return $isVerificationLinkSent;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }

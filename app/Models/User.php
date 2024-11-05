@@ -251,4 +251,41 @@ class User extends Authenticatable implements JWTSubject
             return Response::error(['message' => $e->getMessage()]);
         }
     }
+
+    public static function sendVerificationLink(array $inputData)
+    {
+        try {
+            app(ActivityLogger::class)->logSystemActivity('Starting send verification link process', ['email' => $inputData['email']]);
+            $isUserExist = self::where('email', $inputData['email'])->first();
+            // Check if user exist
+            if (!$isUserExist) {
+                app(ActivityLogger::class)->logSystemActivity('User not found', ['data' => $inputData], 404);
+                app(ActivityLogger::class)->logUserActivity('User not found', ['data' => $inputData]);
+
+                return Response::error(['message' => 'User not found']);
+            } else {
+                // CCheck if user is already verified
+                if (intval($isUserExist->isEmailVerified) === 1) {
+                    app(ActivityLogger::class)->logSystemActivity('User email already verified', ['data' => $inputData], 400);
+                    app(ActivityLogger::class)->logUserActivity('User email already verified', ['data' => $inputData]);
+
+                    return Response::error(['message' => 'User email already verified']);
+                }
+                // Send verification link
+                $getEmailData = app(EmailTemplates::class)->where('name', 'resend_verification_link')->first();
+                $subject = $getEmailData['subject'];
+                $verificationLink = env('APP_URL') . 'api/author/verifyEmail?token=' . Crypt::encrypt($inputData['email']);
+                $content = str_replace('<verification_link>', $verificationLink, $getEmailData['content']);
+
+                app(MailService::class)->sendMail('no_reply@newzy.com', $inputData['email'], $subject, $content);
+                app(ActivityLogger::class)->logSystemActivity('Verification link sent successfully', $inputData, 200, 'json');
+                app(ActivityLogger::class)->logUserActivity('Verification link sent successfully', $inputData);
+
+                return Response::success(['message' => 'Verification link sent successfully']);
+            }
+        } catch (Exception $e) {
+            app(ActivityLogger::class)->logSystemActivity($e->getMessage(), ['data' => $inputData], 500, 'json');
+            return Response::error(['message' => $e->getMessage()]);
+        }
+    }
 }
