@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Utils\MailService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -19,11 +18,10 @@ class AuthController extends Controller
     protected $response;
     protected $mailService;
 
-    public function __construct(User $user, Response $response, MailService $mailServices)
+    public function __construct(User $user, Response $response)
     {
         $this->user = $user;
         $this->response = $response;
-        $this->mailService = $mailServices;
     }
 
     public function register(Request $request)
