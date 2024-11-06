@@ -27,6 +27,9 @@ Route::group(['prefix' => 'author'], function () {
 });
 
 Route::group(['prefix' => 'blog'], function () {
+    Route::post('create', [BlogController::class, 'createBlog']);
+
+    // Blog category
     Route::group(['prefix' => 'category'], function () {
         Route::post('create', [BlogController::class, 'create']);
         Route::get('get', [BlogController::class, 'getCategory']);
