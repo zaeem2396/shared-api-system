@@ -14,7 +14,7 @@
 - Add this line in host entry ```127.0.0.1 app.dev.sas.com```
 - Configure port number in docker-compose.yml file.
 - Run this command to create containers ```docker compose up --build``` (For windows start docker desktop before running this command).
-- After the containers are successfully created hit this urk in browser ```http://app.dev.sas.com:[PORT]/```
+- After the containers are successfully created hit this url in browser ```http://app.dev.sas.com:[PORT]/```
 
 ## DB Setup
 
