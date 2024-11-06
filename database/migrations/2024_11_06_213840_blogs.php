@@ -16,8 +16,9 @@ return new class extends Migration
             $table->string('authorId');
             $table->string('categoryId');
             $table->string('title');
-            $table->string('summary')->unique();
+            $table->string('summary');
             $table->string('image');
+            $table->string('region');
             $table->timestamps();
         });
     }

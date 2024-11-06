@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,10 +14,6 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
 
 Route::group(['prefix' => 'author'], function () {
     Route::post('register', [AuthController::class, 'register']);
@@ -34,5 +29,7 @@ Route::group(['prefix' => 'author'], function () {
 Route::group(['prefix' => 'blog'], function () {
     Route::group(['prefix' => 'category'], function () {
         Route::post('create', [BlogController::class, 'create']);
+        Route::get('get', [BlogController::class, 'getCategory']);
+        Route::put('update', [BlogController::class, 'update']);
     });
 });

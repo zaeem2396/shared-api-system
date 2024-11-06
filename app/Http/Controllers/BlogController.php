@@ -19,6 +19,7 @@ class BlogController extends Controller
         $this->blog = $blog;
         $this->response = $response;
     }
+
     public function create(Request $request)
     {
         try {
@@ -33,6 +34,35 @@ class BlogController extends Controller
 
             $isCategoryCreated = $this->blog->createCategory($inputData);
             return $isCategoryCreated;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function getCategory()
+    {
+        try {
+            return $this->blog->all();
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function update(Request $request)
+    {
+        try {
+            $inputData = $request->only('id', 'name');
+            $validator = Validator::make($inputData, [
+                'id' => 'required',
+                'name' => 'required|max:255'
+            ]);
+
+            if ($validator->fails()) {
+                return $this->response->error(['errors' => $validator->errors()->all()]);
+            }
+
+            $isCategoryUpdated = $this->blog->updateCategory($inputData);
+            return $isCategoryUpdated;
         } catch (Exception $e) {
             return $e->getMessage();
         }
