@@ -6,6 +6,15 @@ meta {
 
 post {
   url: http://app.dev.sas.com:8081/api/blog/create
-  body: none
+  body: multipartForm
   auth: none
+}
+
+body:multipart-form {
+  image: @file(/home/zaeem/Pictures/Screenshot_20240414_153547.png)
+  authorId: 3,6
+  categoryId: 3,2,5,7
+  title: lorem
+  summary: lorem
+  region: in
 }
