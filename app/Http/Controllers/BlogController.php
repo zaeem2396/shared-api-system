@@ -92,9 +92,35 @@ class BlogController extends Controller
             if ($validator->fails()) {
                 return $this->response->error(['errors' => $validator->errors()->all()]);
             }
-            
+
             $isBlogCreated = $this->blog->createBlog($inputData);
             return $isBlogCreated;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function updateBlog(Request $request)
+    {
+        try {
+            $inputData = $request->only('id', 'authorId', 'categoryId', 'title', 'summary', 'image', 'region');
+
+            $validator = Validator::make($inputData, [
+                'id' => 'required',
+                'authorId' => 'required',
+                'categoryId' => 'required',
+                'title' => 'required|string',
+                'summary' => 'required|string',
+                'image' => ['required', File::types(['jpg', 'jpeg', 'png'])->image()->max(3072)],
+                'region' => 'required|string'
+            ]);
+
+            if ($validator->fails()) {
+                return $this->response->error(['errors' => $validator->errors()->all()]);
+            }
+
+            $isBlogUpdated = $this->blog->updateBlog($inputData);
+            return $isBlogUpdated;
         } catch (Exception $e) {
             return $e->getMessage();
         }
