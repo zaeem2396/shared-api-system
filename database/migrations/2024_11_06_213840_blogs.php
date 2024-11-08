@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('authorId');
             $table->string('categoryId');
             $table->string('title');
-            $table->string('summary');
+            $table->text('summary');
+            $table->string('publicId'); // This is cloudinary public ID
             $table->string('image');
             $table->string('region');
             $table->timestamps();

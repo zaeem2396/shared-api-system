@@ -23,6 +23,7 @@ class Blog extends Model
         'title',
         'summary',
         'image',
+        'publicId',
         'region'
     ];
 
@@ -52,7 +53,7 @@ class Blog extends Model
                 ]);
             }
             // If all IDs are valid, return the names of author
-            $inputData['authorId'] = $existingAuthors->pluck('name')->all();
+            $inputData['authorId'] = json_encode($existingAuthors->pluck('name')->all());
 
             $categorydId = explode(',', $inputData['categoryId']);
 
@@ -67,9 +68,10 @@ class Blog extends Model
                     'response' => 'No categories found for the following IDs: ' . implode(', ', $missingCatIds)
                 ]);
             }
-            $inputData['categoryId'] = $existingCategories->pluck('name')->all();
-            $inputData['image'] = app(Cloudinary::class)->store($inputData['image']);
-
+            $inputData['categoryId'] = json_encode($existingCategories->pluck('name')->all());
+            $blogImgUpload = app(Cloudinary::class)->store($inputData['image']);
+            $inputData['image'] = $blogImgUpload['url'];
+            $inputData['publicId'] = $blogImgUpload['public_id'];
             $isBlogCreated = self::create($inputData);
             if ($isBlogCreated) {
                 return app(Response::class)->success(['response' => 'Blog created successfully']);
