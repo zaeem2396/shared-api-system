@@ -125,4 +125,13 @@ class BlogController extends Controller
             return $e->getMessage();
         }
     }
+
+    public function getBlog()
+    {
+        try {
+            return $this->blog->all();
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }
