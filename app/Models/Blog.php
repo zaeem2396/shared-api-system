@@ -32,8 +32,10 @@ class Blog extends Model
     public static function createBlog(array $inputData)
     {
         try {
+            app(ActivityLogger::class)->logSystemActivity('create blog process starts', $inputData, '', '');
             $allowedExt = ['jpg', 'png', 'jpeg'];
             if (!in_array($inputData['image']->getClientOriginalExtension(), $allowedExt)) {
+                app(ActivityLogger::class)->logSystemActivity('Invalid image uploaded, process terminates', $inputData, 500, '');
                 return app(Response::class)->error(['response' => 'Invalid image type, please upload only ' . implode(',', $allowedExt)]);
             }
 
@@ -74,8 +76,10 @@ class Blog extends Model
             $inputData['publicId'] = $blogImgUpload['public_id'];
             $isBlogCreated = self::create($inputData);
             if ($isBlogCreated) {
+                app(ActivityLogger::class)->logSystemActivity('blog created successfully', $inputData, 200, 'json');
                 return app(Response::class)->success(['response' => 'Blog created successfully']);
             } else {
+                app(ActivityLogger::class)->logSystemActivity('blog creation failed', $inputData, 500, 'json');
                 return app(Response::class)->error(['response' => 'Blog creation failed']);
             }
         } catch (Exception $e) {
