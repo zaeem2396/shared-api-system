@@ -27,8 +27,6 @@ class Blog extends Model
         'region'
     ];
 
-    public $timestamps = false;
-
     public static function createBlog(array $inputData)
     {
         try {
@@ -156,6 +154,60 @@ class Blog extends Model
         } catch (Exception $e) {
             // Log the error
             app(ActivityLogger::class)->logSystemActivity($e->getMessage(), ['data' => $inputData], 500, 'JSON');
+
+            return app(Response::class)->error(['message' => $e->getMessage()]);
+        }
+    }
+
+    public static function fetchBlogs(array $inputData)
+    {
+        try {
+            $query = self::select('*');
+
+            // Apply filters if they exist
+            if (isset($inputData['region']) && $inputData['region']) {
+                $query->where('region', $inputData['region']);
+            }
+
+            if (isset($inputData['categoryId']) && $inputData['categoryId']) {
+                $query->whereJsonContains('categoryId', $inputData['categoryId']);
+            }
+
+            // Use the provided date or default to today's date if not provided
+            $date = $inputData['date'] ?? date('Y-m-d');
+            $query->whereDate('created_at', $date);
+
+            // Order by date in descending order
+            $query->orderBy('created_at', 'desc');
+
+            // Set pagination parameters
+            $perPage = $inputData['perPage'] ?? 10;
+            $page = $inputData['page'] ?? 1;
+
+            // Apply pagination
+            $fetchBlogs = $query->paginate($perPage, ['*'], 'page', $page);
+
+            // Transform the collection
+            $fetchBlogs->getCollection()->transform(function ($blog) {
+                $blog->authorId = json_decode($blog->authorId, true);
+                $blog->categoryId = json_decode($blog->categoryId, true);
+                return $blog;
+            });
+
+            // Pagination Details
+            $paginationDetails = [
+                'totalRecords' => $fetchBlogs->total(),
+                'currentPage' => $fetchBlogs->currentPage(),
+                'perPageRecords' => $fetchBlogs->perPage(),
+            ];
+
+            return app(Response::class)->success([
+                'blogList' => $fetchBlogs->items(),
+                'pagination' => $paginationDetails
+            ]);
+        } catch (Exception $e) {
+            // Log the error
+            app(ActivityLogger::class)->logSystemActivity($e->getMessage(), ['data' => ''], 500, 'JSON');
 
             return app(Response::class)->error(['message' => $e->getMessage()]);
         }

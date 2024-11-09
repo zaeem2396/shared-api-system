@@ -126,10 +126,23 @@ class BlogController extends Controller
         }
     }
 
-    public function getBlog()
+    public function getBlog(Request $request)
     {
         try {
-            return $this->blog->all();
+            $inputData = $request->only('region', 'categoryId', 'date', 'perPage');
+
+            $validator = Validator::make($inputData, [
+                'region' => 'nullable|string',
+                'categoryId' => 'nullable|string',
+                'date' => 'nullable|date',
+                'perPage' => 'nullable|integer'
+            ]);
+
+            if ($validator->fails()) {
+                return $this->response->error(['errors' => $validator->errors()->all()]);
+            }
+            $blogs = $this->blog->fetchBlogs($inputData);
+            return $blogs;
         } catch (Exception $e) {
             return $e->getMessage();
         }
