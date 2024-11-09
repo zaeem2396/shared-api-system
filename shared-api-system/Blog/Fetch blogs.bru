@@ -5,14 +5,15 @@ meta {
 }
 
 get {
-  url: http://app.dev.sas.com:8081/api/blog/fetch?region&date&perPage=10
+  url: http://app.dev.sas.com:8081/api/blog/fetch?perPage=10&region=fr
   body: none
   auth: none
 }
 
 params:query {
-  region: 
-  date: 
   perPage: 10
+  region: fr
+  ~page: 3
+  ~date: 
   ~categoryId: politics
 }
