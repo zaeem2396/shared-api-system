@@ -173,19 +173,14 @@ class Blog extends Model
                 $query->whereJsonContains('categoryId', $inputData['categoryId']);
             }
 
-            // Use the provided date or default to today's date if not provided
-            $date = $inputData['date'] ?? date('Y-m-d');
-            $query->whereDate('created_at', $date);
-
             // Order by date in descending order
             $query->orderBy('created_at', 'desc');
 
             // Set pagination parameters
             $perPage = $inputData['perPage'] ?? 10;
-            $page = $inputData['page'] ?? 1;
 
             // Apply pagination
-            $fetchBlogs = $query->paginate($perPage, ['*'], 'page', $page);
+            $fetchBlogs = $query->paginate($perPage);
 
             // Transform the collection
             $fetchBlogs->getCollection()->transform(function ($blog) {
