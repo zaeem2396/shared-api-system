@@ -15,8 +15,17 @@
 - Configure port number in docker-compose.yml file.
 - Run this command to create containers ```docker compose up --build``` (For windows start docker desktop before running this command).
 - After the containers are successfully created hit this url in browser ```http://app.dev.sas.com:[PORT]/```
+- Install Bruno client using this link https://www.usebruno.com/
+- Import shared-api-system from project repo
+
+## Cloudinary setup for image storage
+
+- Create an account on cloudinary https://cloudinary.com/users/login
+- Add CLOUDINARY_URL key in .env and paste cloudinary url from cloudinary dashboard
 
 ## DB Setup
 
-- Add BD credentials in .env file 
-- Hit this url in browser ```http://app.dev.sas.com:[PORT]/migrate```
+- Create 'sas' named DB
+- Add DB credentials in .env file 
+- Hit this url in browser ```http://app.dev.sas.com:[PORT]/migrate``` to migrate the database
+- Hit this url in browder ```http://app.dev.sas.com:[PORT]/populateBlog``` to populate blogs table (it'll insert 250 records)
