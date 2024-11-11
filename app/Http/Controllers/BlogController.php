@@ -49,7 +49,7 @@ class BlogController extends Controller
     public function getCategory()
     {
         try {
-            return $this->blog->all();
+            return $this->blogCat->all()->pluck('name');
         } catch (Exception $e) {
             return $e->getMessage();
         }
