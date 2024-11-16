@@ -24,13 +24,14 @@ Route::group(['prefix' => 'author'], function () {
     Route::put('updatePassword', [AuthController::class, 'updatePassword']);
     Route::get('verifyEmail', [AuthController::class, 'verifyEmail']);
     Route::post('resendVerificationLink', [AuthController::class, 'verificationLink']);
+    Route::get('fetch', [AuthController::class, 'authors']);
 });
 
 Route::group(['prefix' => 'blog'], function () {
     Route::post('create', [BlogController::class, 'createBlog']);
     Route::post('update', [BlogController::class, 'updateBlog']);
     Route::get('fetch', [BlogController::class, 'getBlog']);
-
+    
     // Blog category
     Route::group(['prefix' => 'category'], function () {
         Route::post('create', [BlogController::class, 'create']);

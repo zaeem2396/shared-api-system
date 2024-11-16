@@ -290,4 +290,34 @@ class User extends Authenticatable implements JWTSubject
             return Response::error(['message' => $e->getMessage()]);
         }
     }
+
+    public static function getAuthors($id = '')
+    {
+        try {
+            // If not id parameter provided fetch all the author's
+            if (!$id) {
+                $authors = self::select('id', 'name', 'email', 'specialist', 'role')->where('isEmailVerified', 1)->get();
+                if (count($authors) > 0) {
+                    return app(Response::class)->success(['authors' => $authors]);
+                } else {
+                    return app(Response::class)->error(['message' => 'No author found']);
+                }
+
+                // If id is passed as a parameter return author with that specific Id
+            } else {
+                $author = self::select('id', 'name', 'email', 'isEmailVerified', 'specialist', 'role')->where('id', $id)->first();
+                if (!$author) {
+                    return app(Response::class)->error(['message' => 'Author not found']);
+                }
+                // Validate if author is verified or not
+                if (intval($author->isEmailVerified) === 0) {
+                    return app(Response::class)->error(['message' => 'Author not verified']);
+                }
+                return app(Response::class)->success(['author' => $author]);
+            }
+        } catch (Exception $e) {
+            app(ActivityLogger::class)->logSystemActivity($e->getMessage(), ['data' => $id], 500, 'json');
+            return Response::error(['message' => $e->getMessage()]);
+        }
+    }
 }

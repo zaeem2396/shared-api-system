@@ -207,4 +207,21 @@ class AuthController extends Controller
             return $e->getMessage();
         }
     }
+
+    public function authors(Request $request)
+    {
+        try {
+            $inputData = $request->only('id');
+            $validator = Validator::make($inputData, [
+                'id' => 'nullable|integer',
+            ]);
+            if ($validator->fails()) {
+                return $this->response->error(['errors' => $validator->errors()->all()]);
+            }
+            $authors = $this->user->getAuthors($inputData);
+            return $authors;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }

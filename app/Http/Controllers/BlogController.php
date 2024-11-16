@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Blog;
 use App\Models\BlogCategory;
+use App\Models\User;
 use App\Utils\Cloudinary;
 use App\Utils\Response;
 use Exception;
@@ -18,13 +19,15 @@ class BlogController extends Controller
     protected $blogCat;
     protected $response;
     protected $cloud;
+    protected $user;
 
-    public function __construct(Blog $blog, BlogCategory $blogCat, Response $response, Cloudinary $cloud)
+    public function __construct(Blog $blog, BlogCategory $blogCat, Response $response, Cloudinary $cloud, User $user)
     {
         $this->blog = $blog;
         $this->blogCat = $blogCat;
         $this->response = $response;
         $this->cloud = $cloud;
+        $this->user = $user;
     }
 
     public function create(Request $request)
@@ -49,7 +52,7 @@ class BlogController extends Controller
     public function getCategory()
     {
         try {
-            return $this->blogCat->all()->pluck('name');
+            return $this->blogCat->all();
         } catch (Exception $e) {
             return $e->getMessage();
         }
