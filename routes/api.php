@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
+use App\Models\BlogCategory;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,7 +32,8 @@ Route::group(['prefix' => 'blog'], function () {
     Route::post('create', [BlogController::class, 'createBlog']);
     Route::post('update', [BlogController::class, 'updateBlog']);
     Route::get('fetch', [BlogController::class, 'getBlog']);
-    
+    Route::get('fetch-blog-by-category', [BlogController::class, 'getTodaysBlogsByCategory']);
+
     // Blog category
     Route::group(['prefix' => 'category'], function () {
         Route::post('create', [BlogController::class, 'create']);

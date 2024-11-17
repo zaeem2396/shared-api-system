@@ -150,4 +150,22 @@ class BlogController extends Controller
             return $e->getMessage();
         }
     }
+
+    public function getTodaysBlogsByCategory(Request $request)
+    {
+        try {
+            $inputData = $request->only('categoryId', 'limit');
+            $validator = Validator::make($inputData, [
+                'categoryId' => 'required|string',
+                'limit' => 'required|integer'
+            ]);
+            if ($validator->fails()) {
+                return $this->response->error(['errors' => $validator->errors()->all()]);
+            }
+            $blogs = $this->blog->fetchTodaysBlogsByCategory($inputData);
+            return $blogs;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }

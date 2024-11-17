@@ -207,4 +207,22 @@ class Blog extends Model
             return app(Response::class)->error(['message' => $e->getMessage()]);
         }
     }
+
+    public static function fetchTodaysBlogsByCategory(array $inputData)
+    {
+        try {
+            $todaysBlog = self::where('categoryId', 'LIKE', "%{$inputData['categoryId']}%")->limit($inputData['limit'])->get();
+            $todaysBlog->transform(function ($blog) {
+                $blog->authorId = json_decode($blog->authorId, true);
+                $blog->categoryId = json_decode($blog->categoryId, true);
+                return $blog;
+            });
+            return app(Response::class)->success(['blogList' => $todaysBlog]);
+        } catch (Exception $e) {
+            // Log the error
+            app(ActivityLogger::class)->logSystemActivity($e->getMessage(), ['data' => ''], 500, 'JSON');
+
+            return app(Response::class)->error(['message' => $e->getMessage()]);
+        }
+    }
 }
