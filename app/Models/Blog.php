@@ -7,6 +7,7 @@ use App\Utils\Cloudinary;
 use App\Models\User;
 use App\Models\BlogCategory;
 use App\Utils\ActivityLogger;
+use App\Utils\Blasp;
 use App\Utils\Response;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -68,6 +69,8 @@ class Blog extends Model
                     'response' => 'No categories found for the following IDs: ' . implode(', ', $missingCatIds)
                 ]);
             }
+            $inputData['title'] = app(Blasp::class)->blaspHelper($inputData['title']);
+            $inputData['summary'] = app(Blasp::class)->blaspHelper($inputData['summary']);    
             $inputData['categoryId'] = json_encode($existingCategories->pluck('name')->all());
             $blogImgUpload = app(Cloudinary::class)->store($inputData['image']);
             $inputData['image'] = $blogImgUpload['url'];
