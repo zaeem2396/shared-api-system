@@ -164,6 +164,23 @@ class Blog extends Model
         try {
             $query = self::select('*');
 
+            // If id is passed set rest of the parameters as NULL
+            if (isset($inputData['id']) && $inputData['id']) {
+                $inputData['s'] = null;
+                $inputData['region'] = null;
+                $inputData['categoryId'] = null;
+                $inputData['date'] = null;
+                $inputData['perPage'] = null;
+                $isBlogExist = self::where('id', $inputData['id'])->first();
+                if ($isBlogExist) {
+                    $isBlogExist->authorId = json_decode($isBlogExist->authorId, true);
+                    $isBlogExist->categoryId = json_decode($isBlogExist->categoryId, true);
+                    return app(Response::class)->success(['blog' => $isBlogExist]);
+                } else {
+                    return app(Response::class)->error(['response' => 'Blog not found']);
+                }
+            }
+
             // Apply search filters
             if (isset($inputData['s']) && $inputData['s']) {
                 $query->where(function ($query) use ($inputData) {
@@ -171,7 +188,7 @@ class Blog extends Model
                         ->orWhere('summary', 'like', '%' . $inputData['s'] . '%');
                 });
             }
-            
+
             // Apply filters if they exist
             if (isset($inputData['region']) && $inputData['region']) {
                 $query->where('region', $inputData['region']);

@@ -132,9 +132,10 @@ class BlogController extends Controller
     public function getBlog(Request $request)
     {
         try {
-            $inputData = $request->only('s', 'region', 'categoryId', 'date', 'perPage');
+            $inputData = $request->only('s', 'id', 'region', 'categoryId', 'date', 'perPage');
 
             $validator = Validator::make($inputData, [
+                'id' => 'nullable|string',
                 's' => 'nullable|string',
                 'region' => 'nullable|string',
                 'categoryId' => 'nullable|string',
