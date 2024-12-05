@@ -5,7 +5,12 @@ meta {
 }
 
 get {
-  url: http://app.dev.sas.com:8081/api/blog/fetch-blog-by-category
+  url: http://app.dev.sas.com:8081/api/blog/fetch-blog-by-category?categoryId=politics&limit=2
   body: none
   auth: none
+}
+
+params:query {
+  categoryId: politics
+  limit: 2
 }

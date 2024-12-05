@@ -164,6 +164,14 @@ class Blog extends Model
         try {
             $query = self::select('*');
 
+            // Apply search filters
+            if (isset($inputData['s']) && $inputData['s']) {
+                $query->where(function ($query) use ($inputData) {
+                    $query->where('title', 'like', '%' . $inputData['s'] . '%')
+                        ->orWhere('summary', 'like', '%' . $inputData['s'] . '%');
+                });
+            }
+            
             // Apply filters if they exist
             if (isset($inputData['region']) && $inputData['region']) {
                 $query->where('region', $inputData['region']);
