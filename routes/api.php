@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\ReviewController;
 use App\Models\BlogCategory;
+use App\Models\Review;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,5 +41,11 @@ Route::group(['prefix' => 'blog'], function () {
         Route::post('create', [BlogController::class, 'create']);
         Route::get('get', [BlogController::class, 'getCategory']);
         Route::put('update', [BlogController::class, 'update']);
+    });
+
+    // Blog review
+    Route::group(['prefix' => 'review'], function () {
+        Route::post('create', [ReviewController::class, 'createReview']);
+        Route::get('get', [ReviewController::class, 'getReview']);
     });
 });

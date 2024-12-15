@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Blog;
 use App\Models\BlogCategory;
 use App\Models\User;
 use App\Utils\Cloudinary;
 use App\Utils\Response;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\File;

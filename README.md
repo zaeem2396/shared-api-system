@@ -27,6 +27,6 @@
 
 - Hit this url ```http://localhost:8080``` to open PHPmyAdmin
 - Login with credentials added in .env file
-- Run this command ```docker compose execc bin bash``` to open terminal inside docker container 
+- Run this command ```docker compose exec app bash``` to open terminal inside docker container 
 - Run this command ```php artisan migrate``` to migrate the database
 - Run this command ```php artisan db:seed --class=BlogTableSeeder``` to populate blogs table (it'll insert 250 records)
