@@ -44,7 +44,7 @@ public function run(): void
                 'authorId' => json_encode($faker->randomElement($authorPairs)), // select random pair of authors
                 'categoryId' => json_encode($faker->randomElement($categoryPairs)), // select random pair of categories
                 'title' => $faker->sentence(6),
-                'summary' => '<div>' . $faker->paragraph(50, true) . '</div>',
+                'summary' => '<div>' . $faker->paragraph(350, true) . '</div>',
                 'image' => $faker->imageUrl(800, 400, 'business', true, 'Blog Image'),
                 'publicId' => 'newzy/' . $faker->uuid,
                 'region' => $faker->randomElement(['en', 'in', 'fr', 'es']),
@@ -52,6 +52,7 @@ public function run(): void
                 'updated_at' => now(),
             ]);
         }
+        echo "Data populated successfully with 250 records.\n";
     } catch (Exception $e) {
         throw new Exception($e->getMessage());
     }
