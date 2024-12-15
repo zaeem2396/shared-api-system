@@ -25,7 +25,8 @@
 
 ## DB Setup
 
-- Create 'sas' named DB
-- Add DB credentials in .env file 
-- Hit this url in browser ```http://app.dev.sas.com:[PORT]/migrate``` to migrate the database
-- Hit this url in browser ```http://app.dev.sas.com:[PORT]/populateBlog``` to populate blogs table (it'll insert 250 records)
+- Hit this url ```http://localhost:8080``` to open PHPmyAdmin
+- Login with credentials added in .env file
+- Run this command ```docker compose execc bin bash``` to open terminal inside docker container 
+- Run this command ```php artisan migrate``` to migrate the database
+- Run this command ```php artisan db:seed --class=BlogTableSeeder``` to populate blogs table (it'll insert 250 records)
