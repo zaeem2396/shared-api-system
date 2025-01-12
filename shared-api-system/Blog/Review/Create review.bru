@@ -5,7 +5,23 @@ meta {
 }
 
 post {
-  url: http://app.dev.sas.com:8081/api/blog/review
-  body: none
+  url: http://app.dev.sas.com:8081/api/blog/review/create
+  body: multipartForm
   auth: none
+}
+
+headers {
+  Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYXBwLmRldi5zYXMuY29tOjgwODEvYXBpL2F1dGhvci9sb2dpbiIsImlhdCI6MTczNDYzMjU0NCwiZXhwIjoxNzM0NjM2MTQ0LCJuYmYiOjE3MzQ2MzI1NDQsImp0aSI6IjdCSkhtSEFIMXVtSWp6WloiLCJzdWIiOiI4IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.FNjib-CdSyGlCoLwbqhzSTlY-3pVzPqE7uu4b6b9SwU
+}
+
+body:json {
+  {
+    
+  }
+}
+
+body:multipart-form {
+  blog_id: 43
+  rating: 4
+  comment: its fucking awesome
 }
