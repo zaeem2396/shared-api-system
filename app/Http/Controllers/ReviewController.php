@@ -30,15 +30,43 @@ class ReviewController extends Controller
                 'rating' => 'required',
                 'comment' => 'required|min:5'
             ]);
-            
+
             if ($validator->fails()) {
                 return $this->response->error(['errors' => $validator->errors()->all()]);
             }
-            
+
             $isReviewSubmitted = $this->review->submitReview($inputData);
             return $isReviewSubmitted;
         } catch (Exception $e) {
             return $e->getMessage();
+        }
+    }
+
+    public function getReview(Request $request)
+    {
+        try {
+            $inputData = $request->only('user_id', 'blog_id');
+
+            if ($request->header('Authorization')) {
+                try {
+                    $inputData['user_id'] = JWTAuth::parseToken()->authenticate()->id;
+                } catch (Exception $e) {
+                    return $this->response->error(['message' => 'Invalid or expired token'], 401);
+                }
+            } else {
+                $inputData['user_id'] = null; // Set user_id to null if no token is provided
+            }
+            $validator = Validator::make($inputData, [
+                'blog_id' => 'required'
+            ]);
+            if ($validator->fails()) {
+                return $this->response->error(['errors' => $validator->errors()->all()]);
+            }
+
+            $reviews = $this->review->fetchReviews($inputData);
+            return $reviews;
+        } catch (Exception $e) {
+            return $this->response->error(['message' => $e->getMessage()]);
         }
     }
 }

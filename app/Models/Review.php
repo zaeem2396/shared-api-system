@@ -58,4 +58,29 @@ class Review extends Model
             return app(Response::class)->error(['message' => $e->getMessage()]);
         }
     }
+
+    public static function fetchReviews(array $inputData)
+    {
+        try {
+            if (isset($inputData['user_id'])) {
+                $isUserExist = User::where('id', $inputData['user_id'])->first();
+                if (!$isUserExist) {
+                    return app(Response::class)->error(['message' => 'User not found']);
+                }
+                $reviews = self::where('user_id', $inputData['user_id'])->get();
+            } else {
+                $isBlogExist = Blog::where('id', $inputData['blog_id'])->first();
+                if (!$isBlogExist) {
+                    return app(Response::class)->error(['message' => 'Blog not found']);
+                }
+                $reviews = self::where('blog_id', $inputData['blog_id'])->get();
+            }
+            return app(Response::class)->success(['reviews' => $reviews]);
+        } catch (Exception $e) {
+            // Log the error
+            app(ActivityLogger::class)->logSystemActivity($e->getMessage(), ['data' => $inputData], 500, 'JSON');
+
+            return app(Response::class)->error(['message' => $e->getMessage()]);
+        }
+    }
 }
