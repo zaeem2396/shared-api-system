@@ -86,6 +86,12 @@ class User extends Authenticatable implements JWTSubject
 
                 // Send register mail
                 $getEmailData = app(EmailTemplates::class)->where('name', 'register_author')->first();
+                if ($getEmailData === null) {
+                    app(ActivityLogger::class)->logSystemActivity('Email template not found', ['name' => 'register_author'], 404);
+                    app(ActivityLogger::class)->logUserActivity('Email template not found', ['name' => 'register_author'], 404);
+
+                    return app(Response::class)->error(['message' => 'Processing failed due to technical fault']);
+                }
                 $subject = $getEmailData['subject'];
                 $verificationLink = env('APP_URL') . 'api/author/verifyEmail?token=' . Crypt::encrypt($inputData['email']);
                 $content = str_replace('<verification_link>', $verificationLink, $getEmailData['content']);
