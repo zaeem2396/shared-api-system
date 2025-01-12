@@ -15,7 +15,7 @@
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
-        "nunomaduro/phpinsights": "*",
+        "nunomaduro/phpinsights": "^2.12",
         "php-open-source-saver/jwt-auth": "^2.7"
     },
     "require-dev": {
@@ -64,6 +64,7 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
         }

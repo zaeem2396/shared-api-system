@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('blog_id');
             $table->string('rating');
             $table->text('comment');
-            $table->string('sentimental_score');
+            $table->float('sentimental_score');
             $table->timestamps();
         });
     }

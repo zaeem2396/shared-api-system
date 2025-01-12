@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "67d6470dcbe8ae052f712f84dc69474e",
+    "content-hash": "de90d41428e64c1578db99479b43fb30",
     "packages": [
         {
             "name": "antoineaugusti/laravel-sentiment-analysis",
