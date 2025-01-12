@@ -79,6 +79,15 @@ class AuthController extends Controller
                 return $this->response->error(['message' => "Too many attempts. Please try again in {$retryAfterSeconds} seconds."]);
             }
 
+            // Check if user exist
+            $isUserExist = $this->user->where('email', $email)->first();
+            if (!$isUserExist) {
+                // Log a failed attempt
+                RateLimiter::hit($cacheKey, 300);
+
+                return $this->response->error(['message' => 'User not found']);
+            }
+
             // Check if the email is verified
             $isEmailVerified = json_decode($this->user->isEmailVerified($inputData));
             if (!$isEmailVerified->response->verified) {
