@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Exception;
-use App\Utils\Cloudinary;
+use App\Utils\{Cloudinary, ImageKit};
 use App\Models\User;
 use App\Models\BlogCategory;
 use App\Utils\ActivityLogger;
@@ -70,7 +70,7 @@ class Blog extends Model
                 ]);
             }
             $inputData['title'] = app(Blasp::class)->blaspHelper($inputData['title']);
-            $inputData['summary'] = app(Blasp::class)->blaspHelper($inputData['summary']);    
+            $inputData['summary'] = app(Blasp::class)->blaspHelper($inputData['summary']);
             $inputData['categoryId'] = json_encode($existingCategories->pluck('name')->all());
             $blogImgUpload = app(Cloudinary::class)->store($inputData['image']);
             $inputData['image'] = $blogImgUpload['url'];
