@@ -7,48 +7,52 @@ use ImageKit\ImageKit as ImageKitBase;
 
 class ImageKit
 {
+    private $imageKit;
+
+    public function __construct()
+    {
+        $this->imageKit = new ImageKitBase(
+            env('IMGKIT_PUBLIC_KEY'),
+            env('IMGKIT_PRIVATE_KEY'),
+            env('IMGKIT_URL')
+        );
+    }
+
     public function uploadToImgKit($file)
     {
         try {
-            $imageKit = new ImageKitBase(
-                env('IMGKIT_PUBLIC_KEY'),
-                env('IMGKIT_PRIVATE_KEY'),
-                env('IMGKIT_URL')
-            );
+            $base64File = $this->getBase64File($file);
 
-            $fileContent = file_get_contents($file->getRealPath());
-            $base64File = 'data:' . $file->getMimeType() . ';base64,' . base64_encode($fileContent);
-
-            $uploadedFile = $imageKit->uploadFile([
+            $uploadedFile = $this->imageKit->uploadFile([
                 'file' => $base64File,
                 'fileName' => $file->getClientOriginalName(),
                 'folder' => 'newzy'
             ]);
+
             return [
                 'url' => $uploadedFile->result->url,
                 'public_id' => $uploadedFile->result->fileId
             ];
         } catch (Exception $e) {
-            return $e->getMessage();
+            // Log error and return a generic message
+            return 'File upload failed: ' . $e->getMessage();
         }
     }
 
     public function deleteFromImgKit($publicId)
     {
         try {
-            $imageKit = new ImageKitBase(
-                env('IMGKIT_PUBLIC_KEY'),
-                env('IMGKIT_PRIVATE_KEY'),
-                env('IMGKIT_URL')
-            );
-            $isImgDeleted = $imageKit->deleteFile($publicId);
-            if ($isImgDeleted->responseMetadata->statusCode == 204) {
-                return true;
-            } else {
-                return false;
-            }
+            $isImgDeleted = $this->imageKit->deleteFile($publicId);
+            return $isImgDeleted->responseMetadata->statusCode === 204;
         } catch (Exception $e) {
-            return $e->getMessage();
+            // Log error and return a generic message
+            return 'File deletion failed: ' . $e->getMessage();
         }
+    }
+
+    private function getBase64File($file)
+    {
+        $fileContent = file_get_contents($file->getRealPath());
+        return 'data:' . $file->getMimeType() . ';base64,' . base64_encode($fileContent);
     }
 }
