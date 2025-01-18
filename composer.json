@@ -12,6 +12,7 @@
         "cloudinary/cloudinary_php": "^2",
         "google-gemini-php/laravel": "^1.0",
         "guzzlehttp/guzzle": "^7.2",
+        "imagekit/imagekit": "^4.0",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
