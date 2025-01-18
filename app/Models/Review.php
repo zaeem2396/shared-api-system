@@ -62,19 +62,26 @@ class Review extends Model
     public static function fetchReviews(array $inputData)
     {
         try {
+            $query = DB::table('review')
+                ->join('users', 'review.user_id', '=', 'users.id')
+                ->join('blogs', 'review.blog_id', '=', 'blogs.id')
+                ->select('review.*', 'users.name as user_name', 'blogs.title as blog_title');
             if (isset($inputData['user_id'])) {
                 $isUserExist = User::where('id', $inputData['user_id'])->first();
                 if (!$isUserExist) {
                     return app(Response::class)->error(['message' => 'User not found']);
                 }
-                $reviews = self::where('user_id', $inputData['user_id'])->get();
-            } else {
+                $query->where('review.user_id', $inputData['user_id']);
+            } elseif (isset($inputData['blog_id'])) {
                 $isBlogExist = Blog::where('id', $inputData['blog_id'])->first();
                 if (!$isBlogExist) {
                     return app(Response::class)->error(['message' => 'Blog not found']);
                 }
-                $reviews = self::where('blog_id', $inputData['blog_id'])->get();
+                $query->where('review.blog_id', $inputData['blog_id']);
+            } else {
+                return app(Response::class)->error(['message' => 'Invalid request']);
             }
+            $reviews = $query->get();
             return app(Response::class)->success(['reviews' => $reviews]);
         } catch (Exception $e) {
             // Log the error
