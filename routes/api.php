@@ -51,4 +51,4 @@ Route::group(['prefix' => 'blog'], function () {
     });
 });
 
-
+/* Vendora api endpoints */
