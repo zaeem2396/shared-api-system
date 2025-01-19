@@ -5,15 +5,15 @@ meta {
 }
 
 post {
-  url: http://app.dev.sas.com:8081/api/author/register
+  url: {{baseUrl}}/author/register
   body: json
   auth: none
 }
 
 body:json {
   {
-    "name" : "john doe",
-    "email" : "jdoe@newzy.com",
-    "password" : "John@123"
+    "name" : "bill clinton",
+    "email" : "bill@newzy.com",
+    "password" : "Bill@123"
   }
 }

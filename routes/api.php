@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+/* Blog api endpoints */
 Route::group(['prefix' => 'author'], function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
@@ -49,3 +50,5 @@ Route::group(['prefix' => 'blog'], function () {
         Route::get('get', [ReviewController::class, 'getReview']);
     });
 });
+
+
