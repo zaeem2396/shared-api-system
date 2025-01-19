@@ -27,12 +27,13 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         try {
-            $inputData = $request->only('name', 'email', 'password');
+            $inputData = $request->only('name', 'email', 'password', 'role');
 
             $validator = Validator::make($inputData, [
                 'name' => 'required|string|max:255',
                 'email' => 'required|email',
                 'password' => ['required', 'string', Password::min(8)->max(10)->mixedCase()->symbols()],
+                'role' => 'nullable|string',
             ]);
 
             if ($validator->fails()) {

@@ -18,8 +18,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-/* Blog api endpoints */
-Route::group(['prefix' => 'author'], function () {
+/* Shared routes/common routes */
+
+$sharedRoutes = function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
     Route::post('verify', [AuthController::class, 'verify']);
@@ -29,7 +30,10 @@ Route::group(['prefix' => 'author'], function () {
     Route::get('verifyEmail', [AuthController::class, 'verifyEmail']);
     Route::post('resendVerificationLink', [AuthController::class, 'verificationLink']);
     Route::get('fetch', [AuthController::class, 'authors']);
-});
+};
+
+/* Blog api endpoints */
+Route::group(['prefix' => 'author'], $sharedRoutes);
 
 Route::group(['prefix' => 'blog'], function () {
     Route::post('create', [BlogController::class, 'createBlog']);
@@ -52,3 +56,4 @@ Route::group(['prefix' => 'blog'], function () {
 });
 
 /* Vendora api endpoints */
+Route::group(['prefix' => 'vendor'], $sharedRoutes);

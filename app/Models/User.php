@@ -9,7 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
-use App\Models\Blog;
+use App\Models\{Blog, Vendors};
 use App\Utils\ActivityLogger;
 use App\Utils\MailService;
 use Illuminate\Contracts\Encryption\DecryptException;
@@ -83,7 +83,9 @@ class User extends Authenticatable implements JWTSubject
             }
             $isUserCreated = self::create($inputData);
             if ($isUserCreated) {
-
+                if (isset($inputData['role'])) {
+                    app(Vendors::class)->create(['userId' => $isUserCreated->id]);
+                }
                 // Send register mail
                 $getEmailData = app(EmailTemplates::class)->where('name', 'register_author')->first();
                 if ($getEmailData === null) {
