@@ -68,7 +68,7 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-
+    /* need to optomize this code */
     public static function createUser(array $inputData)
     {
         try {
@@ -85,24 +85,43 @@ class User extends Authenticatable implements JWTSubject
             if ($isUserCreated) {
                 if (isset($inputData['role'])) {
                     app(Vendors::class)->create(['userId' => $isUserCreated->id]);
+                    $getEmailData = app(EmailTemplates::class)->where('name', 'register_author')->first();
+                    if ($getEmailData === null) {
+                        app(ActivityLogger::class)->logSystemActivity('Email template not found', ['name' => 'register_author'], 404);
+                        app(ActivityLogger::class)->logUserActivity('Email template not found', ['name' => 'register_author'], 404);
+
+                        return app(Response::class)->error(['message' => 'Processing failed due to technical fault']);
+                    }
+                    $subject = $getEmailData['subject'];
+                    $verificationLink = env('APP_URL') . 'api/author/verifyEmail?token=' . Crypt::encrypt($inputData['email']);
+                    $replace = ['<verification_link>' => $verificationLink, '[company_name]' => 'Vendora'];
+                    $content = strtr($getEmailData['content'], $replace);
+
+                    app(MailService::class)->sendMail('no_reply@vendora.com', $inputData['email'], $subject, $content);
+                    app(ActivityLogger::class)->logSystemActivity('User created successfully', $isUserCreated, 200, 'json');
+                    app(ActivityLogger::class)->logUserActivity('User created successfully', $inputData['email'], ['email' => $inputData['email']]);
+
+                    return app(Response::class)->success(['message' => 'User created successfully']);
+                } else {
+                    /* Send register mail */
+                    $getEmailData = app(EmailTemplates::class)->where('name', 'register_author')->first();
+                    if ($getEmailData === null) {
+                        app(ActivityLogger::class)->logSystemActivity('Email template not found', ['name' => 'register_author'], 404);
+                        app(ActivityLogger::class)->logUserActivity('Email template not found', ['name' => 'register_author'], 404);
+
+                        return app(Response::class)->error(['message' => 'Processing failed due to technical fault']);
+                    }
+                    $subject = $getEmailData['subject'];
+                    $verificationLink = env('APP_URL') . 'api/author/verifyEmail?token=' . Crypt::encrypt($inputData['email']);
+                    $replace = ['<verification_link>' => $verificationLink, '[company_name]' => 'Newzy'];
+                    $content = strtr($getEmailData['content'], $replace);
+
+                    app(MailService::class)->sendMail('no_reply@newzy.com', $inputData['email'], $subject, $content);
+                    app(ActivityLogger::class)->logSystemActivity('User created successfully', $isUserCreated, 200, 'json');
+                    app(ActivityLogger::class)->logUserActivity('User created successfully', $inputData['email'], ['email' => $inputData['email']]);
+
+                    return app(Response::class)->success(['message' => 'User created successfully']);
                 }
-                // Send register mail
-                $getEmailData = app(EmailTemplates::class)->where('name', 'register_author')->first();
-                if ($getEmailData === null) {
-                    app(ActivityLogger::class)->logSystemActivity('Email template not found', ['name' => 'register_author'], 404);
-                    app(ActivityLogger::class)->logUserActivity('Email template not found', ['name' => 'register_author'], 404);
-
-                    return app(Response::class)->error(['message' => 'Processing failed due to technical fault']);
-                }
-                $subject = $getEmailData['subject'];
-                $verificationLink = env('APP_URL') . 'api/author/verifyEmail?token=' . Crypt::encrypt($inputData['email']);
-                $content = str_replace('<verification_link>', $verificationLink, $getEmailData['content']);
-
-                app(MailService::class)->sendMail('no_reply@newzy.com', $inputData['email'], $subject, $content);
-                app(ActivityLogger::class)->logSystemActivity('User created successfully', $isUserCreated, 200, 'json');
-                app(ActivityLogger::class)->logUserActivity('User created successfully', $inputData['email'], ['email' => $inputData['email']]);
-
-                return app(Response::class)->success(['message' => 'User created successfully']);
             } else {
                 app(ActivityLogger::class)->logSystemActivity('User creation failed', $isUserCreated, 400);
                 app(ActivityLogger::class)->logUserActivity('User creation failed', $inputData['email'], ['email' => $inputData['email']]);

@@ -18,4 +18,5 @@ class Vendors extends Model
         'logo',
         'status'
     ];
+    /* vendor operations here */
 }
