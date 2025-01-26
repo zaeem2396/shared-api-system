@@ -43,4 +43,29 @@ class VendorController extends Controller
             return $e->getMessage();
         }
     }
+
+    public function vendorProfile(Request $request)
+    {
+        try {
+            $inputData = $request->only('userId');
+            $token = $request->header('Authorization');
+            if (!$token) {
+                return $this->response->error(['error' => 'Unauthorized or token not provided']);
+            }
+            $inputData['userId'] = JWTAuth::parseToken()->authenticate()->id;
+
+            $validator = Validator::make($inputData, [
+                'userId' => 'required'
+            ]);
+
+            if ($validator->fails()) {
+                return $this->response->error(['errors' => $validator->errors()->all()]);
+            }
+
+            $vendorProfile = $this->vendor->getVendorProfile($inputData);
+            return $vendorProfile;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }
