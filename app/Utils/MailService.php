@@ -17,7 +17,7 @@ class MailService
      * @param string $content The HTML content of the email.
      * @return bool|string True if the email was sent successfully, error message otherwise.
      */
-    private function sendMail(string $from, string $to, string $subject, string $content)
+    public function sendMail(string $from, string $to, string $subject, string $content)
     {
         try {
             Mail::send([], [], function ($message) use ($from, $to, $subject, $content) {
