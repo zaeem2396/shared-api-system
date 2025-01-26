@@ -26,7 +26,7 @@ class ImageKit
             $uploadedFile = $this->imageKit->uploadFile([
                 'file' => $base64File,
                 'fileName' => $file->getClientOriginalName(),
-                'folder' => 'newzy'
+                'folder' => 'vendora'
             ]);
 
             return [

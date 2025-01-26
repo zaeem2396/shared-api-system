@@ -1,0 +1,25 @@
+meta {
+  name: Update vendor store
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/vendor/updateVendorStore
+  body: multipartForm
+  auth: none
+}
+
+headers {
+  Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYXBwLmRldi5zYXMuY29tOjgwODEvYXBpL3ZlbmRvci9sb2dpbiIsImlhdCI6MTczNzkxNTYwNSwiZXhwIjoxNzM3OTE5MjA1LCJuYmYiOjE3Mzc5MTU2MDUsImp0aSI6IjF3bmc0SHVlekpvdkhkN0oiLCJzdWIiOiIxMiIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.dUBgoaLKtODgQy6X7Tx1fmRe1F338ew751Y9dfZ8PX0
+}
+
+body:form-urlencoded {
+  : 
+}
+
+body:multipart-form {
+  storeName: iCancy
+  storeDescription: Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores id quo dolorem, iste cum vel suscipit quaerat expedita laudantium tenetur beatae est, commodi rerum aperiam, cupiditate saepe delectus praesentium excepturi!
+  logo: @file(/home/zaeem/Desktop/temp/Kitchen_cleaning.webp)
+}

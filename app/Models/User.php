@@ -33,6 +33,7 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
+        'platform_id'
     ];
 
     /**
@@ -81,6 +82,9 @@ class User extends Authenticatable implements JWTSubject
 
                 return app(Response::class)->duplicate(['message' => 'User already exist']);
             }
+
+            $platformId = (isset($inputData['role'])) ? '11' : '10';
+            $inputData['platform_id'] = $platformId;
             $isUserCreated = self::create($inputData);
             if ($isUserCreated) {
                 if (isset($inputData['role'])) {

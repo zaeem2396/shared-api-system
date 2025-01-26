@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\VendorController;
 use App\Models\BlogCategory;
 use App\Models\Review;
 use Illuminate\Support\Facades\Route;
@@ -57,3 +58,4 @@ Route::group(['prefix' => 'blog'], function () {
 
 /* Vendora api endpoints */
 Route::group(['prefix' => 'vendor'], $sharedRoutes);
+Route::post('vendor/updateVendorStore', [VendorController::class, 'updateVendorStore']);
