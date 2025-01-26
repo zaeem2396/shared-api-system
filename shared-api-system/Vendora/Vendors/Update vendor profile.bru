@@ -1,0 +1,22 @@
+meta {
+  name: Update vendor profile
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{baseUrl}}/vendor/update
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYXBwLmRldi5zYXMuY29tOjgwODEvYXBpL3ZlbmRvci9sb2dpbiIsImlhdCI6MTczNzkxMDY5OCwiZXhwIjoxNzM3OTE0Mjk4LCJuYmYiOjE3Mzc5MTA2OTgsImp0aSI6ImpaN2VQcDRoUFFxakNoaE8iLCJzdWIiOiIxMCIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.FkPSDvayHGpkXrIsWtwoG_rhFJ2p6axc5b6BKpcW_eI
+}
+
+body:json {
+  {
+    "name" : "james gunn",
+    "email" : "james@newzy.com"
+  }
+}
