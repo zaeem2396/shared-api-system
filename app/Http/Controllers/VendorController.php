@@ -17,7 +17,7 @@ class VendorController extends Controller
         private Vendors $vendor
     ) {}
 
-    public function updateVendorStore(Request $request)
+    public function vendorStore(Request $request)
     {
         try {
             $inputData = $request->only('userId', 'storeName', 'storeDescription', 'logo');
@@ -37,7 +37,7 @@ class VendorController extends Controller
                 return $this->response->error(['errors' => $validator->errors()->all()]);
             }
 
-            $isStoreUpdated = $this->vendor->updateStore($inputData);
+            $isStoreUpdated = $this->vendor->addStore($inputData);
             return $isStoreUpdated;
         } catch (Exception $e) {
             return $e->getMessage();

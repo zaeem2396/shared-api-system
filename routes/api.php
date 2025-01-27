@@ -58,5 +58,5 @@ Route::group(['prefix' => 'blog'], function () {
 
 /* Vendora api endpoints */
 Route::group(['prefix' => 'vendor'], $sharedRoutes);
-Route::post('vendor/updateVendorStore', [VendorController::class, 'updateVendorStore']);
+Route::post('vendor/vendorStore', [VendorController::class, 'vendorStore']);
 Route::get('vendor/vendorProfile', [VendorController::class, 'vendorProfile']);
