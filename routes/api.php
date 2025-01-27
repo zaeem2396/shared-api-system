@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AppSettingsController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ReviewController;
@@ -18,6 +19,9 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+/* Global routes */
+
+Route::post('create', [AppSettingsController::class, 'createSettings']);
 
 /* Shared routes/common routes */
 

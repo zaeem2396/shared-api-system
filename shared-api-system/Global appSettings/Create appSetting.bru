@@ -1,0 +1,17 @@
+meta {
+  name: Create appSetting
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/create?key=perVendorStoreLimit&value=3&platformId=11
+  body: none
+  auth: none
+}
+
+params:query {
+  key: perVendorStoreLimit
+  value: 3
+  platformId: 11
+}
