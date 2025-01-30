@@ -9,6 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "andreaselia/laravel-api-to-postman": "^2.0",
         "antoineaugusti/laravel-sentiment-analysis": "^4.1",
         "blaspsoft/blasp": "^1.2",
         "cloudinary-labs/cloudinary-laravel": "^2.2",
