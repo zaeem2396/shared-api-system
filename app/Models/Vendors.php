@@ -28,13 +28,13 @@ class Vendors extends Model
     public static function addStore(array $inputData)
     {
         try {
-            $isVendorExist = self::where('storeName', $inputData['storeName'])->first();
-            /* Check if vendor store exist */
-            if ($isVendorExist) {
-                app(ActivityLogger::class)->logSystemActivity('Vendor already exist', ['userId' => $inputData['userId']], 409);
-                app(ActivityLogger::class)->logUserActivity('Vendor already exist', ['userId' => $inputData['userId']]);
+            /* Check if vendor has more than 3 stores */
+            $totalVendorStore = self::where('userId', $inputData['userId'])->count();
+            if ($totalVendorStore >= app('Helper')->fetchAppSettings()['vendorStoreLimit']) {
+                app(ActivityLogger::class)->logSystemActivity('Vendor has reached maximum store limit', ['userId' => $inputData['userId']], 409);
+                app(ActivityLogger::class)->logUserActivity('Vendor has reached maximum store limit', ['userId' => $inputData['userId']]);
 
-                return app(Response::class)->duplicate(['message' => 'Vendor already exist']);
+                return app(Response::class)->error(['message' => 'You have reached maximum store limit']);
             }
             /* Check if image is a valid image */
             $allowedExt = ['jpg', 'png', 'jpeg'];
@@ -74,7 +74,7 @@ class Vendors extends Model
             }
 
             $getVendorDetails = User::select('id', 'name', 'email')->where('id', $inputData['userId'])->first();
-            $getVendorStoreDetails = self::select('userId', 'storeName', 'storeDescription', 'logo', 'status')->where('userId', $inputData['userId'])->first();
+            $getVendorStoreDetails = self::select('userId', 'storeName', 'storeDescription', 'logo', 'status')->where('userId', $inputData['userId'])->get();
 
             $getVendorProfile = [
                 'vendorDetails' => $getVendorDetails,

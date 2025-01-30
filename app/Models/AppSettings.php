@@ -35,4 +35,16 @@ class AppSettings extends Model
             return $e->getMessage();
         }
     }
+
+    public static function getAppSettings()
+    {
+        try {
+            $settings = self::pluck('value', 'key')->toArray();
+            return app(Response::class)->success(['data' => $settings]);
+        } catch (Exception $e) {
+            app(ActivityLogger::class)->logSystemActivity($e->getMessage(), [], 500, 'JSON');
+
+            return $e->getMessage();
+        }
+    }
 }
