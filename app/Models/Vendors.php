@@ -32,7 +32,6 @@ class Vendors extends Model
     public static function addStore(array $inputData)
     {
         try {
-            return app(Intervention::class)->resizeImageAndUploadToImageKit($inputData['logo']);
             /* Check if vendor is registered on platformId 11 */
             $isVendor = User::where('id', $inputData['userId'])->first();
             if ($isVendor->platform_id != app('Helper')->fetchAppSettings()['vendorPlatformId']) {
