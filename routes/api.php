@@ -64,3 +64,5 @@ Route::group(['prefix' => 'blog'], function () {
 Route::group(['prefix' => 'vendor'], $sharedRoutes);
 Route::post('vendor/vendorStore', [VendorController::class, 'vendorStore']);
 Route::get('vendor/vendorProfile', [VendorController::class, 'vendorProfile']);
+Route::post('vendor/updateStore', [VendorController::class, 'updateStore']);
+

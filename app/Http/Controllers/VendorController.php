@@ -68,4 +68,31 @@ class VendorController extends Controller
             return $e->getMessage();
         }
     }
+
+    public function updateStore(Request $request)
+    {
+        try {
+            $inputData = $request->only('userId', 'storeName', 'storeDescription', 'logo');
+            $token = $request->header('Authorization');
+            if (!$token) {
+                return $this->response->error(['error' => 'Unauthorized or token not provided']);
+            }
+            $inputData['userId'] = JWTAuth::parseToken()->authenticate()->id;
+
+            $validator = Validator::make($inputData, [
+                'storeName' => 'nullable',
+                'storeDescription' => 'nullable',
+                'logo' => 'nullable'
+            ]);
+
+            if ($validator->fails()) {
+                return $this->response->error(['errors' => $validator->errors()->all()]);
+            }
+
+            $isStoreUpdated = $this->vendor->updateStore($inputData);
+            return $isStoreUpdated;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }
