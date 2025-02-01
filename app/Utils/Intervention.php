@@ -22,27 +22,38 @@ class Intervention
     public function resizeImageAndUploadToImageKit($file)
     {
         try {
-            $intervention = ImageManager::imagick();
+            $intervention = ImageManager::gd();
 
             $sizes = [
-                's' => 100,
-                'm' => 300,
-                'l' => 600
+                's' => ['width' => 100, 'height' => 75],
+                'm' => ['width' => 300, 'height' => 225],
+                'l' => ['width' => 600, 'height' => 450]
             ];
             $imageUrls = [];
 
-            foreach ($sizes as $sizeKey => $width) {
-                $resizedImg = $intervention->read($file->getPathname())->resize(width: $width);
-                /* Convert image to base 64 */
-                $base64File = 'data:image/' . $file->getClientOriginalExtension() . ';base64,' . base64_encode($resizedImg->encode());
-                /* Upload image to imageKit */
+            foreach ($sizes as $sizeKey => $dimensions) {
+                $newWidth = $dimensions['width'];
+                $newHeight = $dimensions['height'];
+
+                // Read & resize image to specified width and height
+                $resizedImage = $intervention->read($file->getPathname())->resize(width: $newWidth, height: $newHeight);
+
+                // Convert resized image to Base64
+                $base64File = 'data:image/' . $file->getClientOriginalExtension() . ';base64,' . base64_encode($resizedImage->encode());
+
+                // Upload to ImageKit
                 $uploadedFile = $this->imageKit->uploadFile([
                     'file' => $base64File,
-                    'fileName' => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME) . "_{$sizeKey}." . $file->getClientOriginalExtension(),
+                    'fileName' => pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME) . "_{$sizeKey}.",
                     'folder' => 'vendora'
                 ]);
 
-                $imageUrls[$sizeKey] = $uploadedFile->result->url;
+                // Store uploaded file URL with dimensions
+                $imageUrls[$sizeKey] = [
+                    'url' => $uploadedFile->result->url,
+                    'width' => $newWidth,
+                    'height' => $newHeight
+                ];
             }
 
             return [
