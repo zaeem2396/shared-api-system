@@ -28,6 +28,14 @@ class Vendors extends Model
     public static function addStore(array $inputData)
     {
         try {
+            /* Check if vendor is registered on platformId 11 */
+            $isVendor = User::where('id', $inputData['userId'])->first();
+            if ($isVendor->platformId != 11) {
+                app(ActivityLogger::class)->logSystemActivity('Vendor is not registered on platformId 11', ['userId' => $inputData['userId']], 409);
+                app(ActivityLogger::class)->logUserActivity('Vendor is not registered on platformId 11', ['userId' => $inputData['userId']]);
+
+                return app(Response::class)->error(['message' => 'System error occured']);
+            }
             /* Check if vendor has more than 3 stores */
             $totalVendorStore = self::where('userId', $inputData['userId'])->count();
             if ($totalVendorStore >= app('Helper')->fetchAppSettings()['vendorStoreLimit']) {
