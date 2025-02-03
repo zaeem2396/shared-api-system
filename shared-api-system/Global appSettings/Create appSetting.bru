@@ -5,13 +5,13 @@ meta {
 }
 
 post {
-  url: {{baseUrl}}/create?key=vendorStorePrefix&value=VDA&platformId=11
-  body: none
+  url: {{baseUrl}}/create
+  body: multipartForm
   auth: none
 }
 
-params:query {
-  key: vendorStorePrefix
-  value: VDA
-  platformId: 11
+body:multipart-form {
+  key: vendora
+  value: Vendora Ltd
+  platformId: 0
 }

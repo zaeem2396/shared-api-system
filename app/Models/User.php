@@ -84,8 +84,8 @@ class User extends Authenticatable implements JWTSubject
                 return $response->duplicate(['message' => 'User already exists']);
             }
 
-            $inputData['platform_id'] = isset($inputData['role']) ? '11' : '10';
-            $companyName = isset($inputData['role']) ? 'Vendora' : 'Newzy';
+            $inputData['platform_id'] = isset($inputData['role']) ? app('Helper')->fetchAppSettings()['vendoraPlatformId'] : app('Helper')->fetchAppSettings()['newzyPlatformId'];
+            $companyName = isset($inputData['role']) ? app('Helper')->fetchAppSettings()['vendora'] : app('Helper')->fetchAppSettings()['newzy'];
             if (isset($inputData['role'])) {
                 $inputData['role'] = 'vendor';
             }
