@@ -1,0 +1,24 @@
+meta {
+  name: Add product
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/product/create
+  body: multipartForm
+  auth: none
+}
+
+headers {
+  Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYXBwLmRldi5zYXMuY29tOjgwODEvYXBpL3ZlbmRvci9sb2dpbiIsImlhdCI6MTczODYwODAxNiwiZXhwIjoxNzM4NjExNjE2LCJuYmYiOjE3Mzg2MDgwMTYsImp0aSI6IkkwcGJXSVBYQmJJaFR1bG0iLCJzdWIiOiIxOSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.UoXy3q643BExJPWetq4k2X5HkBMv4fww_-FL1a-3YHw
+}
+
+body:multipart-form {
+  categoryId: 2
+  name: amazon vr | gaming
+  description: Lorem ipsum dolor, sit amet consectetur adipisicing elit. Corporis officia velit quos blanditiis soluta qui quidem veniam aut mollitia, tempora fugiat ipsam recusandae laborum fugit dolorem fuga accusantium ipsa maiores!
+  price: 35000
+  stock: 24
+  img: @file(/home/zaeem/websites/d1/themes.iamabdus.com/biznex/1.3/assets/img/home/about/team1.jpg)
+}

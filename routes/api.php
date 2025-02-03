@@ -3,6 +3,7 @@
 use App\Http\Controllers\AppSettingsController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\VendorController;
 use Illuminate\Support\Facades\Route;
@@ -65,3 +66,8 @@ Route::post('vendor/vendorStore', [VendorController::class, 'vendorStore']);
 Route::get('vendor/vendorProfile', [VendorController::class, 'vendorProfile']);
 Route::post('vendor/updateStore', [VendorController::class, 'updateStore']);
 
+/* Vendora product api end points */
+Route::group(['prefix' => 'product'], function () {
+    Route::post('create', [ProductController::class, 'addProduct']);
+    Route::get('get', [ProductController::class, 'getProduct']);
+});
