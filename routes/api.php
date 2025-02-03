@@ -5,8 +5,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\VendorController;
-use App\Models\BlogCategory;
-use App\Models\Review;
 use Illuminate\Support\Facades\Route;
 
 /*

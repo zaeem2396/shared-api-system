@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Utils\ActivityLogger;
 use App\Utils\ImageKit;
-use App\Utils\Intervention;
 use App\Utils\MailService;
 use App\Utils\Response;
 use App\Utils\StoreId;
