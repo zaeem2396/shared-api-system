@@ -1,10 +1,11 @@
 <?php
 
+use App\Http\Controllers\AppSettingsController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReviewController;
-use App\Models\BlogCategory;
-use App\Models\Review;
+use App\Http\Controllers\VendorController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,9 +18,14 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+/* Global routes */
 
-/* Blog api endpoints */
-Route::group(['prefix' => 'author'], function () {
+Route::post('create', [AppSettingsController::class, 'createSettings']);
+Route::get('getAppSettings', [AppSettingsController::class, 'getAppSettings']);
+
+/* Shared routes/common routes */
+
+$sharedRoutes = function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
     Route::post('verify', [AuthController::class, 'verify']);
@@ -29,7 +35,10 @@ Route::group(['prefix' => 'author'], function () {
     Route::get('verifyEmail', [AuthController::class, 'verifyEmail']);
     Route::post('resendVerificationLink', [AuthController::class, 'verificationLink']);
     Route::get('fetch', [AuthController::class, 'authors']);
-});
+};
+
+/* Blog api endpoints */
+Route::group(['prefix' => 'author'], $sharedRoutes);
 
 Route::group(['prefix' => 'blog'], function () {
     Route::post('create', [BlogController::class, 'createBlog']);
@@ -51,4 +60,14 @@ Route::group(['prefix' => 'blog'], function () {
     });
 });
 
+/* Vendora api endpoints */
+Route::group(['prefix' => 'vendor'], $sharedRoutes);
+Route::post('vendor/vendorStore', [VendorController::class, 'vendorStore']);
+Route::get('vendor/vendorProfile', [VendorController::class, 'vendorProfile']);
+Route::post('vendor/updateStore', [VendorController::class, 'updateStore']);
 
+/* Vendora product api end points */
+Route::group(['prefix' => 'product'], function () {
+    Route::post('create', [ProductController::class, 'addProduct']);
+    Route::get('get', [ProductController::class, 'getProduct']);
+});

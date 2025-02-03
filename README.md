@@ -16,6 +16,7 @@
 - Run this command to create containers ```docker compose up --build``` (For windows start docker desktop before running this command).
 - After the containers are successfully created hit this url in browser ```http://app.dev.sas.com:[PORT]/```
 - Install Bruno client using this link https://www.usebruno.com/
+- To run with postman run ```php artisan export:postman```
 - Import shared-api-system from project repo
 
 ## Cloudinary setup for image storage

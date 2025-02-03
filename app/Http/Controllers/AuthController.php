@@ -27,12 +27,13 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         try {
-            $inputData = $request->only('name', 'email', 'password');
+            $inputData = $request->only('name', 'email', 'password', 'role');
 
             $validator = Validator::make($inputData, [
                 'name' => 'required|string|max:255',
                 'email' => 'required|email',
-                'password' => ['required', 'string', Password::min(8)->max(10)->mixedCase()->symbols()],
+                'password' => ['required', 'string', Password::min(8)->max(15)->mixedCase()->symbols()],
+                'role' => 'nullable|string',
             ]);
 
             if ($validator->fails()) {
@@ -73,8 +74,7 @@ class AuthController extends Controller
             $email = $inputData['email'];
             $cacheKey = 'login_attempts_' . $email;
 
-            // Rate limiting logic: Check if the user has exceeded login attempts
-            if (RateLimiter::tooManyAttempts($cacheKey, 3)) {
+            if (RateLimiter::tooManyAttempts($cacheKey, app('Helper')->fetchAppSettings()['loginLimit'])) {
                 $retryAfterSeconds = RateLimiter::availableIn($cacheKey);
                 return $this->response->error(['message' => "Too many attempts. Please try again in {$retryAfterSeconds} seconds."]);
             }
@@ -83,7 +83,7 @@ class AuthController extends Controller
             $isUserExist = $this->user->where('email', $email)->first();
             if (!$isUserExist) {
                 // Log a failed attempt
-                RateLimiter::hit($cacheKey, 300);
+                RateLimiter::hit($cacheKey, app('Helper')->fetchAppSettings()['reloginTimer']);
 
                 return $this->response->error(['message' => 'User not found']);
             }
@@ -97,7 +97,7 @@ class AuthController extends Controller
             $token = JWTAuth::attempt($inputData);
             if (!$token) {
                 // Log a failed attempt
-                RateLimiter::hit($cacheKey, 300);
+                RateLimiter::hit($cacheKey, app('Helper')->fetchAppSettings()['reloginTimer']);
 
                 return $this->response->error(['error' => 'Invalid credentials']);
             }

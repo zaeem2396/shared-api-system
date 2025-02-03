@@ -1,0 +1,25 @@
+meta {
+  name: Add vendor store
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/vendor/vendorStore
+  body: multipartForm
+  auth: none
+}
+
+headers {
+  Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYXBwLmRldi5zYXMuY29tOjgwODEvYXBpL3ZlbmRvci9sb2dpbiIsImlhdCI6MTczODQzMzkxMiwiZXhwIjoxNzM4NDM3NTEyLCJuYmYiOjE3Mzg0MzM5MTIsImp0aSI6IkVNNVNvVTFoUW5uZDNCNE8iLCJzdWIiOiIxOSIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.YMi7Jkyh8dLrhfqOL8CudwW2fbic-ZhnMbVnNXCoup0
+}
+
+body:form-urlencoded {
+  : 
+}
+
+body:multipart-form {
+  storeName: flipkart
+  storeDescription: Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores id quo dolorem, iste cum vel suscipit quaerat expedita laudantium tenetur beatae est, commodi rerum aperiam, cupiditate saepe delectus praesentium excepturi!
+  logo: @file(/home/zaeem/websites/d1/themes.iamabdus.com/biznex/1.3/assets/img/paypal.png)
+}
