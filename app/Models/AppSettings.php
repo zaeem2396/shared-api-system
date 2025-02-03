@@ -36,9 +36,13 @@ class AppSettings extends Model
         }
     }
 
-    public static function getAppSettings()
+    public static function fetchAppSettings(array $inputData = null)
     {
         try {
+            if (isset($inputData['platformId'])) {
+                $settings = self::where('platformId', $inputData['platformId'])->pluck('value', 'key')->toArray();
+                return app(Response::class)->success(['data' => $settings]);
+            }
             $settings = self::pluck('value', 'key')->toArray();
             return app(Response::class)->success(['data' => $settings]);
         } catch (Exception $e) {

@@ -32,4 +32,21 @@ class AppSettingsController extends Controller
             return $e->getMessage();
         }
     }
+
+    public function getAppSettings(Request $request)
+    {
+        try {
+            $inputData = $request->only('platformId');
+            $validator = Validator::make($inputData, [
+                'platformId' => 'nullable'
+            ]);
+            if ($validator->fails()) {
+                return $this->response->error(['errors' => $validator->errors()->all()]);
+            }
+            $appSettings = $this->appSettings->fetchAppSettings($inputData);
+            return $appSettings;
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }

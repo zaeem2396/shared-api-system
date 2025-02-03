@@ -114,7 +114,7 @@ class User extends Authenticatable implements JWTSubject
             ]);
 
             app(MailService::class)->sendMail(
-                'no_reply@' . strtolower($companyName) . '.com',
+                app('Helper')->fetchAppSettings()['newzyNoReplyEmail'],
                 $inputData['email'],
                 $subject,
                 $content

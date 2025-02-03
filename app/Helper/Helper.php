@@ -7,7 +7,7 @@ use App\Models\AppSettings;
 class Helper {
 
     public static function fetchAppSettings() {
-        $settings =  app(AppSettings::class)->getAppSettings();
+        $settings =  app(AppSettings::class)->fetchAppSettings();
         if (is_string($settings)) {
             $settings = json_decode($settings, true);
         }

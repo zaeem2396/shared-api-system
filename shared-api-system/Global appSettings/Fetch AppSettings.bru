@@ -1,0 +1,15 @@
+meta {
+  name: Fetch AppSettings
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/getAppSettings?platformId=0
+  body: none
+  auth: none
+}
+
+params:query {
+  platformId: 0
+}

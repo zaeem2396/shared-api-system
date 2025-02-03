@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 /* Global routes */
 
 Route::post('create', [AppSettingsController::class, 'createSettings']);
+Route::get('getAppSettings', [AppSettingsController::class, 'getAppSettings']);
 
 /* Shared routes/common routes */
 

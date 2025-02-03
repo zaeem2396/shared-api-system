@@ -81,7 +81,7 @@ class Vendors extends Model
 
                 /* Send email */
                 app(MailService::class)->sendMail(
-                    'no_reply@vendora.com',
+                    app('Helper')->fetchAppSettings()['vendoraNoReplyEmail'],
                     $isVendor->email,
                     $subject,
                     $content
