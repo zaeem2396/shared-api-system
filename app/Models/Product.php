@@ -84,7 +84,7 @@ class Product extends Model
     {
         try {
             /* Need to optomize this code */
-            $products = self::all();
+            $products = self::all()->toArray();
             $productImg = ProductImage::select('img')->get()->map(function ($img) {
                 return json_decode($img->img, true);
             });
