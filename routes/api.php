@@ -3,6 +3,7 @@
 use App\Http\Controllers\AppSettingsController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\VendorController;
@@ -71,3 +72,6 @@ Route::group(['prefix' => 'product'], function () {
     Route::post('create', [ProductController::class, 'addProduct']);
     Route::get('get', [ProductController::class, 'getProduct']);
 });
+
+/* Vendora product category api end point */
+Route::post('category', [CategoryController::class, 'category']);
