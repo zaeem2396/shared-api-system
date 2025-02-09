@@ -5,14 +5,16 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/product/get?q&startingPrice=200&endingPrice=250&categoryId=6,7
+  url: {{baseUrl}}/product/get?currentPage=23
   body: none
   auth: none
 }
 
 params:query {
-  q: 
-  startingPrice: 200
-  endingPrice: 250
-  categoryId: 6,7
+  currentPage: 23
+  ~q: hic
+  ~startingPrice: 200
+  ~endingPrice: 250
+  ~categoryId: 6,7
+  ~skuId: XmCcZZ8s3Z
 }

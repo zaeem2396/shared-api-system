@@ -47,7 +47,7 @@ class ProductController extends Controller
     public function getProduct(Request $request)
     {
         try {
-            $inputData = $request->only('skuId', 'q', 'categoryId', 'name', 'description', 'startingPrice', 'endingPrice');
+            $inputData = $request->only('skuId', 'q', 'categoryId', 'name', 'description', 'startingPrice', 'endingPrice', 'currentPage');
             $validator = Validator::make($inputData, [
                 'skuId' => 'nullable',
                 'q' => 'nullable',
@@ -55,7 +55,8 @@ class ProductController extends Controller
                 'name' => 'nullable',
                 'description' => 'nullable',
                 'startingPrice' => 'nullable|numeric',
-                'endingPrice' => 'nullable|numeric'
+                'endingPrice' => 'nullable|numeric',
+                'currentPage' => 'nullable|numeric',
             ]);
             if ($validator->fails()) {
                 return $this->response->error(['errors' => $validator->errors()->all()]);

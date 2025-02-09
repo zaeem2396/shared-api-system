@@ -150,7 +150,7 @@ class Product extends Model
             $paginationDetails = [
                 'totalProducts' => $products->total(),
                 'perPage' => $products->perPage(),
-                'currentPage' => $products->currentPage()
+                'currentPage' => $products->currentPage() ?? $inputData['currentPage'],
             ];
             /* Prepare the response */
             $productResponse = [
