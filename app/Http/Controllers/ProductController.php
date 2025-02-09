@@ -44,10 +44,24 @@ class ProductController extends Controller
         }
     }
 
-    public function getProduct() {
+    public function getProduct(Request $request)
+    {
         try {
-            /* Need to optomize this code */
-            return $this->product->fetchProduct();
+            $inputData = $request->only('skuId', 'q', 'categoryId', 'name', 'description', 'startingPrice', 'endingPrice');
+            $validator = Validator::make($inputData, [
+                'skuId' => 'nullable',
+                'q' => 'nullable',
+                'categoryId' => 'nullable',
+                'name' => 'nullable',
+                'description' => 'nullable',
+                'startingPrice' => 'nullable|numeric',
+                'endingPrice' => 'nullable|numeric'
+            ]);
+            if ($validator->fails()) {
+                return $this->response->error(['errors' => $validator->errors()->all()]);
+            }
+            $products = $this->product->fetchProduct($inputData);
+            return $products;
         } catch (Exception $e) {
             return $e->getMessage();
         }

@@ -80,20 +80,88 @@ class Product extends Model
         }
     }
 
-    public function fetchProduct()
+    public function fetchProduct(array $inputData)
     {
         try {
-            /* Need to optomize this code */
-            $products = self::all()->toArray();
+            $query = self::select('*');
+            if (isset($inputData['skuId'])) {
+                $inputData['q'] = null;
+                $inputData['categoryId'] = null;
+                $inputData['name'] = null;
+                $inputData['description'] = null;
+                $inputData['startingPrice'] = null;
+                $inputData['endingPrice'] = null;
+                $isProductExist = self::where('skuId', $inputData['skuId'])->first();
+                if ($isProductExist) {
+                    $productImg = ProductImage::select('img')->where('product_id', $inputData['skuId'])->get()->map(function ($img) {
+                        return json_decode($img->img, true);
+                    });
+                    return app(Response::class)->success(['data' => $isProductExist, 'productImg' => $productImg]);
+                } else {
+                    return app(Response::class)->error(['message' => 'Product does not exist']);
+                }
+            }
+
+            /* Search query */
+            if (isset($inputData['q'])) {
+                $query->where(function ($query) use ($inputData) {
+                    $query->where('name', 'like', '%' . $inputData['q'] . '%')
+                        ->orWhere('description', 'like', '%' . $inputData['q'] . '%')
+                        ->orWhere('price', 'like', '%' . $inputData['q'] . '%');
+                });
+            }
+
+            /* Price range filter */
+            if (isset($inputData['startingPrice'])) {
+                $maxPrice = isset($inputData['endingPrice'])
+                    ? $inputData['endingPrice']
+                    : self::max('price'); // Get the maximum price from the products table
+
+                $query->whereBetween('price', [$inputData['startingPrice'], $maxPrice]);
+            }
+
+            /* Category filter */
+            if (isset($inputData['categoryId'])) {
+                $categoryIds = is_array($inputData['categoryId'])
+                    ? $inputData['categoryId']
+                    : explode(',', $inputData['categoryId']); // Convert string to array
+
+                $query->whereIn('categoryId', $categoryIds);
+            }
+
+
+            /* Order by date in descending order */
+            $query->orderBy('created_at', 'desc');
+
+            /* Set paginaion parameter */
+            $perPage = isset($inputData['perPage']) ? $inputData['perPage'] : 10;
+
+            /* Apply pagination */
+            $products = $query->paginate($perPage);
+
+            /* Transform images */
             $productImg = ProductImage::select('img')->get()->map(function ($img) {
                 return json_decode($img->img, true);
-            });
+            })->toArray();
+
+            $productImg = !empty($productImg) ? $productImg : null;
+
+            /* Pagination details */
+            $paginationDetails = [
+                'totalProducts' => $products->total(),
+                'perPage' => $products->perPage(),
+                'currentPage' => $products->currentPage()
+            ];
+            /* Prepare the response */
             $productResponse = [
-                'products' => $products,
+                'products' => $products->items(),
                 'productImg' => $productImg
             ];
             if ($products) {
-                return app(Response::class)->success(['data' => $productResponse]);
+                return app(Response::class)->success([
+                    'data' => $productResponse,
+                    'pagination' => $paginationDetails
+                ]);
             }
         } catch (Exception $e) {
             app(ActivityLogger::class)->logSystemActivity($e->getMessage(), [], 500, 'JSON');

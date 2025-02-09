@@ -5,7 +5,14 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/product/get
+  url: {{baseUrl}}/product/get?q&startingPrice=200&endingPrice=250&categoryId=6,7
   body: none
   auth: none
+}
+
+params:query {
+  q: 
+  startingPrice: 200
+  endingPrice: 250
+  categoryId: 6,7
 }

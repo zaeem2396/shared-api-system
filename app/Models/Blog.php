@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Exception;
-use App\Utils\{Cloudinary, ImageKit};
+use App\Utils\Cloudinary;
 use App\Models\User;
 use App\Models\BlogCategory;
 use App\Utils\ActivityLogger;
