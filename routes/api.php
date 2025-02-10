@@ -21,8 +21,10 @@ use Illuminate\Support\Facades\Route;
 */
 /* Global routes */
 
-Route::post('create', [AppSettingsController::class, 'createSettings']);
-Route::get('getAppSettings', [AppSettingsController::class, 'getAppSettings']);
+Route::group(['prefix' => 'appSettings'], function () {
+    Route::post('create', [AppSettingsController::class, 'createSettings']);
+    Route::get('getAppSettings', [AppSettingsController::class, 'getAppSettings']);
+});
 
 /* Shared routes/common routes */
 
@@ -74,4 +76,4 @@ Route::group(['prefix' => 'product'], function () {
 });
 
 /* Vendora product category api end point */
-Route::post('category', [CategoryController::class, 'category']);
+Route::post('vendor/category', [CategoryController::class, 'category']);
