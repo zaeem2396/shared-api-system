@@ -11,7 +11,7 @@
 
 - Clone this repository.
 - Create a .env file, copy the content present in .env.example and run ```php artisan key:generate``` command.
-- Add this line in host entry ```127.0.0.1 app.dev.sas.com```
+- Add these line's in host entry ```127.0.0.1 app.dev.sas.com```, ```127.0.0.1 app.dev.vendora.sas.com```
 - Configure port number in docker-compose.yml file.
 - Run this command to create containers ```docker compose up --build``` (For windows start docker desktop before running this command).
 - After the containers are successfully created hit this url in browser ```http://app.dev.sas.com:[PORT]/```
