@@ -33,7 +33,8 @@ class VendoraDomainMiddleware
         'api/vendor/updateStore',
         'api/product/create',
         'api/product/get',
-        'api/vendor/category'
+        'api/vendor/category',
+        'api/vendor/subCategory',
     ];
 
     public function handle(Request $request, Closure $next): Response

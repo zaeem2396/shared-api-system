@@ -21,6 +21,7 @@ class Product extends Model
         'skuId',
         'vendorId',
         'categoryId',
+        'subCategoryId',
         'name',
         'description',
         'price',
@@ -87,6 +88,7 @@ class Product extends Model
             if (isset($inputData['skuId'])) {
                 $inputData['q'] = null;
                 $inputData['categoryId'] = null;
+                $inputData['subCategoryId'] = null;
                 $inputData['name'] = null;
                 $inputData['description'] = null;
                 $inputData['startingPrice'] = null;
@@ -129,6 +131,14 @@ class Product extends Model
                 $query->whereIn('categoryId', $categoryIds);
             }
 
+            /* Subcategory filter */
+            if (isset($inputData['subCategoryId'])) {
+                $subCategoryIds = is_array($inputData['subCategoryId'])
+                    ? $inputData['subCategoryId']
+                    : explode(',', $inputData['subCategoryId']); // Convert string to array
+
+                $query->whereIn('subCategoryId', $subCategoryIds);
+            }
 
             /* Order by date in descending order */
             $query->orderBy('created_at', 'desc');

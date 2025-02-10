@@ -26,6 +26,7 @@ class ProductController extends Controller
             }
             $validator = Validator::make($inputData, [
                 'categoryId' => 'required',
+                'subCategoryId' => 'required',
                 'name' => 'required',
                 'description' => 'required',
                 'price' => 'required',

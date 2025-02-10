@@ -23,7 +23,7 @@ class SubCategoryController extends Controller
                 'id' => 'nullable',
                 'name' => 'nullable',
                 'categoryId' => 'nullable',
-                'method' => 'in:GET,POST,PUT,DELETE|required'
+                'method' => 'required|in:GET,POST,PUT,DELETE'
             ]);
             if ($validator->fails()) {
                 return $this->response->error(['errors' => $validator->errors()->all()]);

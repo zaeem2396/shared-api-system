@@ -6,6 +6,7 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\SubCategoryController;
 use App\Http\Controllers\VendorController;
 use Illuminate\Support\Facades\Route;
 
@@ -75,5 +76,6 @@ Route::group(['prefix' => 'product'], function () {
     Route::get('get', [ProductController::class, 'getProduct']);
 });
 
-/* Vendora product category api end point */
+/* Vendora product category and sub-category api end point */
 Route::post('vendor/category', [CategoryController::class, 'category']);
+Route::post('vendor/subCategory', [SubCategoryController::class, 'subCategory']);

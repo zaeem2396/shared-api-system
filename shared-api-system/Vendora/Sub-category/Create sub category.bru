@@ -1,0 +1,19 @@
+meta {
+  name: Create sub category
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/vendor/subCategory
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name" : "speakers",
+    "categoryId" : "1",
+    "method" : "POST"
+  }
+}
