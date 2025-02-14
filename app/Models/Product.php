@@ -188,7 +188,7 @@ class Product extends Model
 
             /* Prepare the response */
             return app(Response::class)->success([
-                'data' => ['products' => $productResponse],
+                'data' => ['products' => $productResponse[0]],
                 'pagination' => $paginationDetails
             ]);
         } catch (Exception $e) {
