@@ -84,21 +84,43 @@ class Product extends Model
     public function fetchProduct(array $inputData)
     {
         try {
-            $query = self::select('*');
+            $query = self::select('products.*', 'product_img.img')
+                ->leftJoin('product_img', 'products.skuId', '=', 'product_img.product_id');
+
             if (isset($inputData['skuId'])) {
-                $inputData['q'] = null;
-                $inputData['categoryId'] = null;
-                $inputData['subCategoryId'] = null;
-                $inputData['name'] = null;
-                $inputData['description'] = null;
-                $inputData['startingPrice'] = null;
-                $inputData['endingPrice'] = null;
-                $isProductExist = self::where('skuId', $inputData['skuId'])->first();
-                if ($isProductExist) {
-                    $productImg = ProductImage::select('img')->where('product_id', $inputData['skuId'])->get()->map(function ($img) {
-                        return json_decode($img->img, true);
+                $inputData = array_merge($inputData, [
+                    'q' => null,
+                    'categoryId' => null,
+                    'subCategoryId' => null,
+                    'name' => null,
+                    'description' => null,
+                    'startingPrice' => null,
+                    'endingPrice' => null
+                ]);
+
+                $isProductExist = $query->where('products.skuId', $inputData['skuId'])->get();
+
+                if ($isProductExist->isNotEmpty()) {
+                    /* Map images correctly */
+                    $productData = $isProductExist->map(function ($product) {
+                        return [
+                            'id' => $product->id,
+                            'skuId' => $product->skuId,
+                            'vendorId' => $product->vendorId,
+                            'categoryId' => $product->categoryId,
+                            'name' => $product->name,
+                            'description' => $product->description,
+                            'price' => $product->price,
+                            'stock' => $product->stock,
+                            'created_at' => $product->created_at,
+                            'updated_at' => $product->updated_at,
+                            'productImg' => $product->img ? json_decode($product->img, true) : []
+                        ];
                     });
-                    return app(Response::class)->success(['data' => $isProductExist, 'productImg' => $productImg]);
+
+                    return app(Response::class)->success([
+                        'data' => $productData
+                    ]);
                 } else {
                     return app(Response::class)->error(['message' => 'Product does not exist']);
                 }
@@ -107,75 +129,70 @@ class Product extends Model
             /* Search query */
             if (isset($inputData['q'])) {
                 $query->where(function ($query) use ($inputData) {
-                    $query->where('name', 'like', '%' . $inputData['q'] . '%')
-                        ->orWhere('description', 'like', '%' . $inputData['q'] . '%')
-                        ->orWhere('price', 'like', '%' . $inputData['q'] . '%');
+                    $query->where('products.name', 'like', '%' . $inputData['q'] . '%')
+                        ->orWhere('products.description', 'like', '%' . $inputData['q'] . '%')
+                        ->orWhere('products.price', 'like', '%' . $inputData['q'] . '%');
                 });
             }
 
             /* Price range filter */
             if (isset($inputData['startingPrice'])) {
-                $maxPrice = isset($inputData['endingPrice'])
-                    ? $inputData['endingPrice']
-                    : self::max('price'); // Get the maximum price from the products table
-
-                $query->whereBetween('price', [$inputData['startingPrice'], $maxPrice]);
+                $maxPrice = isset($inputData['endingPrice']) ? $inputData['endingPrice'] : self::max('price');
+                $query->whereBetween('products.price', [$inputData['startingPrice'], $maxPrice]);
             }
 
             /* Category filter */
             if (isset($inputData['categoryId'])) {
-                $categoryIds = is_array($inputData['categoryId'])
-                    ? $inputData['categoryId']
-                    : explode(',', $inputData['categoryId']); // Convert string to array
-
-                $query->whereIn('categoryId', $categoryIds);
+                $categoryIds = is_array($inputData['categoryId']) ? $inputData['categoryId'] : explode(',', $inputData['categoryId']);
+                $query->whereIn('products.categoryId', $categoryIds);
             }
 
             /* Subcategory filter */
             if (isset($inputData['subCategoryId'])) {
-                $subCategoryIds = is_array($inputData['subCategoryId'])
-                    ? $inputData['subCategoryId']
-                    : explode(',', $inputData['subCategoryId']); // Convert string to array
-
-                $query->whereIn('subCategoryId', $subCategoryIds);
+                $subCategoryIds = is_array($inputData['subCategoryId']) ? $inputData['subCategoryId'] : explode(',', $inputData['subCategoryId']);
+                $query->whereIn('products.subCategoryId', $subCategoryIds);
             }
 
             /* Order by date in descending order */
-            $query->orderBy('created_at', 'desc');
+            $query->orderBy('products.created_at', 'desc');
 
-            /* Set paginaion parameter */
+            /* Set pagination parameter */
             $perPage = isset($inputData['perPage']) ? $inputData['perPage'] : 10;
 
             /* Apply pagination */
             $products = $query->paginate($perPage);
 
-            /* Transform images */
-            $productImg = ProductImage::select('img')->get()->map(function ($img) {
-                return json_decode($img->img, true);
-            })->toArray();
-
-            $productImg = !empty($productImg) ? $productImg : null;
+            /* Format the product response */
+            $productResponse = collect($products->items())->map(function ($product) {
+                return [
+                    'id' => $product->id,
+                    'skuId' => $product->skuId,
+                    'vendorId' => $product->vendorId,
+                    'categoryId' => $product->categoryId,
+                    'name' => $product->name,
+                    'description' => $product->description,
+                    'price' => $product->price,
+                    'stock' => $product->stock,
+                    'created_at' => $product->created_at,
+                    'updated_at' => $product->updated_at,
+                    'productImg' => $product->img ? json_decode($product->img, true) : []
+                ];
+            });
 
             /* Pagination details */
             $paginationDetails = [
                 'totalProducts' => $products->total(),
                 'perPage' => $products->perPage(),
-                'currentPage' => $products->currentPage() ?? $inputData['currentPage'],
+                'currentPage' => $products->currentPage()
             ];
+
             /* Prepare the response */
-            $productResponse = [
-                'products' => $products->items(),
-                'productImg' => $productImg
-            ];
-            if ($products) {
-                return app(Response::class)->success([
-                    'data' => $productResponse,
-                    'pagination' => $paginationDetails
-                ]);
-            }
+            return app(Response::class)->success([
+                'data' => ['products' => $productResponse],
+                'pagination' => $paginationDetails
+            ]);
         } catch (Exception $e) {
             app(ActivityLogger::class)->logSystemActivity($e->getMessage(), [], 500, 'JSON');
-
             return $e->getMessage();
         }
     }
