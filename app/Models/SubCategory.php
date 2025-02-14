@@ -114,7 +114,7 @@ class SubCategory extends Model
     private static function fetchSubCategory()
     {
         try {
-            $subCategory = self::all();
+            $subCategory = self::all('id', 'name', 'categoryId');
             app(ActivityLogger::class)->logSystemActivity('SubCategory fetched successfully', $subCategory, 200, 'JSON');
             return app(Response::class)->success(['message' => 'SubCategory fetched successfully', 'data' => $subCategory]);
         } catch (Exception $e) {
