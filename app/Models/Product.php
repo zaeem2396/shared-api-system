@@ -112,8 +112,7 @@ class Product extends Model
                             'description' => $product->description,
                             'price' => $product->price,
                             'stock' => $product->stock,
-                            'created_at' => $product->created_at,
-                            'updated_at' => $product->updated_at,
+                            'status' => $product->status,
                             'productImg' => $product->img ? json_decode($product->img, true) : []
                         ];
                     });
@@ -173,8 +172,7 @@ class Product extends Model
                     'description' => $product->description,
                     'price' => $product->price,
                     'stock' => $product->stock,
-                    'created_at' => $product->created_at,
-                    'updated_at' => $product->updated_at,
+                    'status' => $product->status,
                     'productImg' => $product->img ? json_decode($product->img, true) : []
                 ];
             });
