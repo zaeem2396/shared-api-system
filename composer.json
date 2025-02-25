@@ -22,6 +22,7 @@
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
         "nunomaduro/phpinsights": "^2.12",
+        "opcodesio/log-viewer": "^3.15",
         "php-open-source-saver/jwt-auth": "^2.7",
         "propaganistas/laravel-disposable-email": "^2.4"
     },
